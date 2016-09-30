@@ -9,10 +9,13 @@ import javax.swing.JLabel;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
+
 
 public class CamRecorder {
 
@@ -96,12 +99,20 @@ public class CamRecorder {
 
 		Mat m = new Mat();
 	
-		 
+
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	 
 			this.videoCapture.read(m);
+			
 			Imgproc.blur(m, m, new Size(3, 3));
 			Imgproc.cvtColor(m, m, Imgproc.COLOR_RGB2HSV);
+			
 			Core.inRange(m, new Scalar(hMin, sMin, vMin), new Scalar(hMax, sMax, vMax), m);
+			Core.rectangle(m, new Point(10,100), new Point(100,200),new Scalar(47,255,6));
+			//Kare ekrana çizdirildi
+			
+			
+			
 			return toBufferedImage(m);
 
 	}
@@ -118,9 +129,23 @@ public class CamRecorder {
 		m.get(0, 0, b); // get all the pixels
 		BufferedImage image = new BufferedImage(m.cols(), m.rows(), type);
 		final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		System.arraycopy(b, 0, targetPixels, 0, b.length);
+		
+		
+		System.arraycopy(b, 0, targetPixels, 0, b.length);	
+		/*int i,j;
+		
+		for(i=0;i<m.rows();i++){
+			for(j=0;j<m.cols();j++){
+				System.out.print(m.get(i, j).toString());
+				}
+		System.out.println(" ");
+}*/
+		
+		
 		return image;
 
 	}
+	
+	
 
 }
