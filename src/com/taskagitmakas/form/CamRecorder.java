@@ -105,10 +105,18 @@ public class CamRecorder {
 			this.videoCapture.read(m);
 			
 			Imgproc.blur(m, m, new Size(3, 3));
-			Imgproc.cvtColor(m, m, Imgproc.COLOR_RGB2HSV);
+			//Imgproc.cvtColor(m, m, Imgproc.COLOR_RGB2HSV);
 			
-			Core.inRange(m, new Scalar(hMin, sMin, vMin), new Scalar(hMax, sMax, vMax), m);
-			Core.rectangle(m, new Point(10,100), new Point(100,200),new Scalar(47,255,6));
+			//Core.inRange(m, new Scalar(hMin, sMin, vMin), new Scalar(hMax, sMax, vMax), m);
+			Core.flip(m,m,1);
+			Core.rectangle(m, new Point(285,100), new Point(295,110),new Scalar(47,255,6));
+			Core.rectangle(m, new Point(385,145), new Point(395,155),new Scalar(47,255,6));
+			Core.rectangle(m, new Point(320,80), new Point(330,90),new Scalar(47,255,6));
+			Core.rectangle(m, new Point(295,255), new Point(305,265),new Scalar(47,255,6));
+			Core.rectangle(m, new Point(335,305), new Point(345,315),new Scalar(47,255,6));
+			Core.rectangle(m, new Point(395,295), new Point(405,305),new Scalar(47,255,6));
+			
+
 			//Kare ekrana çizdirildi
 			
 			

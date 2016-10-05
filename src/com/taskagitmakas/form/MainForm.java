@@ -83,12 +83,12 @@ public class MainForm {
 	private void initialize() {
 		frame = new JFrame();
 	
-		frame.setBounds(100, 100, 617, 421);
+		frame.setBounds(100, 100, 900, 650);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 420, 374);
+		panel.setBounds(0, 0, 678, 591);
 		panel.setToolTipText("");
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setLayout(null);
@@ -96,7 +96,7 @@ public class MainForm {
 	
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(419, 0, 196, 374);
+		panel_1.setBounds(690, 0, 196, 591);
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		frame.getContentPane().add(panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
@@ -257,7 +257,7 @@ public class MainForm {
 		Height=panel.getHeight();
 	 	Width=panel.getWidth(); 
 	 
-		imageLabel.setBounds(0, 0, Width, Height);
+		imageLabel.setBounds(12, 0, 666, 591);
 		imageLabel.setText("");
 		 
 		panel.add(imageLabel);
