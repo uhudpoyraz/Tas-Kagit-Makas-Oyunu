@@ -44,7 +44,7 @@ public class MainForm {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+ 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -60,6 +60,8 @@ public class MainForm {
 
 		while (isKeyPress) {
 			imageFromCam = vcam.startRecord();
+			
+			
 			if (imageFromCam != null) {
 				image.setImage(imageFromCam);
 				imageLabel.setIcon(image);
@@ -256,7 +258,7 @@ public class MainForm {
 		gbc_vMaxSpinner.gridy = 6;
 		panel_1.add(vMaxSpinner, gbc_vMaxSpinner);
 
-		JButton btnFiltrele = new JButton("Filtrele");
+		JButton btnFiltrele = new JButton("El rengi al");
 		btnFiltrele.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
