@@ -22,6 +22,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.core.TermCriteria;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.video.BackgroundSubtractorMOG2;
@@ -52,7 +53,7 @@ public class CamRecorder {
 	private double[][] cUpper = new double[SAMPLE_NUM][3];
 	private double[][] cBackLower = new double[SAMPLE_NUM][3];
 	private double[][] cBackUpper = new double[SAMPLE_NUM][3];
-
+	
 	private Scalar lowerBound = new Scalar(0, 0, 0);
 	private Scalar upperBound = new Scalar(0, 0, 0);
 	private int squareLen = 20;
@@ -136,7 +137,7 @@ public class CamRecorder {
 		videoCapture.read(background);
 		Core.flip(background,background, 1);
 		Imgproc.GaussianBlur(background, background, new Size(5, 5), 5, 5);
-	 	Imgproc.cvtColor(background, background, Imgproc.COLOR_BGR2YCrCb);
+	 //	Imgproc.cvtColor(background, background, Imgproc.COLOR_BGR2YCrCb);
 
 		int cols, rows;
 
@@ -180,41 +181,47 @@ public class CamRecorder {
 		
 		avgColor = new double[SAMPLE_NUM][3];
 		avgBackColor = new double[SAMPLE_NUM][3];
-		backgroundSubtractorMOG=new BackgroundSubtractorMOG2();
+		backgroundSubtractorMOG=new BackgroundSubtractorMOG2(3000,64F);
 	   
 	 
 	}
  
-	
+	private int LearningTime=0;
 	 public BufferedImage startRecord() {
 
 		Mat m = new Mat();
 		Mat c = new Mat();
+		Mat b = new Mat();
 
 		this.videoCapture.read(m);
-		Imgproc.cvtColor(m, m, Imgproc.COLOR_RGB2HSV);
 		Core.flip(m, m, 1);
-		Imgproc.GaussianBlur(m, m, new Size(5, 5), 5, 5);
-	 	
- 
-	 	 
-		for (int i = 0; i < SAMPLE_NUM; i++) {
-
-			//Core.putText(m, Integer.toString(i),new Point(samplePoints[i][0].x + squareLen / 2, samplePoints[i][0].y + squareLen / 2)),Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 0, 255));
-			Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 1);
-		}
- 
-		 for (int i = 0; i < SAMPLE_NUM; i++) {
-			// System.out.println("");
-			for (int j = 0; j < 3; j++) {
-				avgColor[i][j] = (m.get((int) (samplePoints[i][0].x + squareLen / 2),
-						(int) (samplePoints[i][0].y + squareLen / 2)))[j];
-				//System.out.print((m.get((int) (samplePoints[i][0].x + squareLen / 2),(int) (samplePoints[i][0].y + squareLen / 2)))[j]+" ");
-
-			}
-		} 
+	 //	Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2GRAY); 
 		
-  	 
+		Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(9, 9),new Point(4, 4));
+		backgroundSubtractorMOG.apply(m, c);
+		if (LearningTime < 300){
+			
+			LearningTime++;
+			System.out.println(LearningTime);
+			
+		}
+		 
+		List<MatOfPoint> contours=new ArrayList<MatOfPoint>();
+		Mat hierarchy=new Mat();
+		Imgproc.findContours(c, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+		
+		for(int i=0;i<contours.size();i++){
+			
+			double area = Imgproc.contourArea(contours.get(i));
+			
+				if(area>1000){
+					
+					 Imgproc.drawContours(m, contours, i,new Scalar (0, 255, 0), 3);
+				}
+			
+			
+			
+		}
 		return toBufferedImage(m);
 
 	} 
@@ -240,7 +247,7 @@ public class CamRecorder {
 		
 		Core.inRange(m, new Scalar(minColor[0]-5, minColor[1]-5, minColor[2]-5),new Scalar((maxColor[0]), maxColor[1], maxColor[2]+5), c);
 		
-		 List<MatOfPoint> contours=new ArrayList<MatOfPoint>();
+			List<MatOfPoint> contours=new ArrayList<MatOfPoint>();
 			Mat hierarchy=new Mat();
 			Imgproc.findContours(c, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 			
