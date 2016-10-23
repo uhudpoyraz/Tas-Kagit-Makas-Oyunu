@@ -5,20 +5,26 @@ import java.awt.image.DataBufferByte;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.omg.IOP.Codec;
+ import org.omg.IOP.Codec;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -58,6 +64,10 @@ public class CamRecorder {
 	private Scalar upperBound = new Scalar(0, 0, 0);
 	private int squareLen = 20;
 
+	private ColorBlobDetector mDetector;
+	private Mat mSpectrum;
+	int numberOfFingers = 0;
+	
 	double data[] = new double[3];
 	List<double[]> skinColors = new ArrayList<double[]>();
 
@@ -121,8 +131,7 @@ public class CamRecorder {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		videoCapture = new VideoCapture(0);
-		videoCapture.set(10, 100);
-		//videoCapture = new VideoCapture("/home/uhudpoyraz/Masaüstü/b.mp4");
+ 		//videoCapture = new VideoCapture("/home/uhudpoyraz/Masaüstü/b.mp4");
 		
 		
 		this.hMin = 0;
@@ -184,49 +193,136 @@ public class CamRecorder {
 		backgroundSubtractorMOG=new BackgroundSubtractorMOG2(3000,64F);
 	   
 	 
+		
+		mDetector = new ColorBlobDetector();
+		mSpectrum = new Mat();
 	}
  
 	private int LearningTime=0;
 	 public BufferedImage startRecord() {
+
+			Mat m = new Mat();
+			Mat c = new Mat();
+
+			this.videoCapture.read(m);
+ 			Core.flip(m, m, 1);
+			Imgproc.GaussianBlur(m, m, new Size(3, 3), 1 ,1);
+			 Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2HSV_FULL);
+	 
+		 	 
+			for (int i = 0; i < SAMPLE_NUM; i++) {
+
+				//Core.putText(m, Integer.toString(i),new Point(samplePoints[i][0].x + squareLen / 2, samplePoints[i][0].y + squareLen / 2)),Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 0, 255));
+				Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 1);
+			}
+	 
+			 for (int i = 0; i < SAMPLE_NUM; i++) {
+				// System.out.println("");
+				for (int j = 0; j < 3; j++) {
+					avgColor[i][j] = (c.get((int) (samplePoints[i][0].x + squareLen / 2),
+							(int) (samplePoints[i][0].y + squareLen / 2)))[j];
+					//System.out.print((m.get((int) (samplePoints[i][0].x + squareLen / 2),(int) (samplePoints[i][0].y + squareLen / 2)))[j]+" ");
+
+				}
+			} 
+			
+			 mDetector.setHsvColor(new Scalar(avgColor[0][0],avgColor[0][1],avgColor[0][2]));
+			 Imgproc.resize(mDetector.getSpectrum(), mSpectrum, new Size(200, 64));
+			return toBufferedImage(m);
+
+	 }
+	 
+	 
+	 double iThreshold=0;
+	 public BufferedImage filterSkinColor() {
 
 		Mat m = new Mat();
 		Mat c = new Mat();
 		Mat b = new Mat();
 
 		this.videoCapture.read(m);
-		Core.flip(m, m, 1);
-	 //	Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2GRAY); 
+ 		Core.flip(m, m, 1);
+		Imgproc.GaussianBlur(m, m, new Size(3, 3), 1 ,1);
+	 	
+		mDetector.process(m);
 		
-		Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(9, 9),new Point(4, 4));
-		backgroundSubtractorMOG.apply(m, c);
-		if (LearningTime < 300){
-			
-			LearningTime++;
-			System.out.println(LearningTime);
-			
-		}
+		List<MatOfPoint> contours = mDetector.getContours(); 
+		 RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(0)	.toArray()));
+
+	        double boundWidth = rect.size.width;
+	        double boundHeight = rect.size.height;
+	        int boundPos = 0;
+
+	        for (int i = 1; i < contours.size(); i++) {
+	            rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(i).toArray()));
+	            if (rect.size.width * rect.size.height > boundWidth * boundHeight) {
+	                boundWidth = rect.size.width;
+	                boundHeight = rect.size.height;
+	                boundPos = i;
+	            }
+	        }
+
+	        Rect boundRect = Imgproc.boundingRect(new MatOfPoint(contours.get(boundPos).toArray()));
+	        Core.rectangle( m, boundRect.tl(), boundRect.br(), new Scalar(255,255,255), 2, 8, 0 );
+		
+	        int rectHeightThresh = 0;
+	        double a = boundRect.br().y - boundRect.tl().y;
+	        a = a * 0.7;
+	        a = boundRect.tl().y + a;
+	        Core.rectangle( m, boundRect.tl(), new Point(boundRect.br().x, a), new Scalar (0, 255, 0), 2, 8, 0 );
+
+	        MatOfPoint2f pointMat = new MatOfPoint2f();
+	        Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(boundPos).toArray()), pointMat, 3, true);
+	        contours.set(boundPos, new MatOfPoint(pointMat.toArray()));
+
+	        MatOfInt hull = new MatOfInt();
+	        MatOfInt4 convexDefect = new MatOfInt4();
+	        Imgproc.convexHull(new MatOfPoint(contours.get(boundPos).toArray()), hull);
+
+	        if(hull.toArray().length < 3) return toBufferedImage(m);
+
+	        Imgproc.convexityDefects(new MatOfPoint(contours.get(boundPos)	.toArray()), hull, convexDefect);
+
+	        List<MatOfPoint> hullPoints = new LinkedList<MatOfPoint>();
+	        List<Point> listPo = new LinkedList<Point>();
+	        for (int j = 0; j < hull.toList().size(); j++) {
+	            listPo.add(contours.get(boundPos).toList().get(hull.toList().get(j)));
+	        }
+
+	        MatOfPoint e = new MatOfPoint();
+	        e.fromList(listPo);
+	        hullPoints.add(e);
+
+	        List<MatOfPoint> defectPoints = new LinkedList<MatOfPoint>();
+	        List<Point> listPoDefect = new LinkedList<Point>();
+	        for (int j = 0; j < convexDefect.toList().size(); j = j+4) {
+	            Point farPoint = contours.get(boundPos).toList().get(convexDefect.toList().get(j+2));
+	            Integer depth = convexDefect.toList().get(j+3);
+	            if(depth > iThreshold && farPoint.y < a){
+	                listPoDefect.add(contours.get(boundPos).toList().get(convexDefect.toList().get(j+2)));
+	            }
+	             
+	        }
+
+	        MatOfPoint e2 = new MatOfPoint();
+	        e2.fromList(listPo);
+	        defectPoints.add(e2);
+ 
+	        Imgproc.drawContours(m, hullPoints, -1, new Scalar (0, 255, 0), 3);
+
+	        int defectsTotal = (int) convexDefect.total();
+ 
+	   
+
+ 
+		
+		
 		 
-		List<MatOfPoint> contours=new ArrayList<MatOfPoint>();
-		Mat hierarchy=new Mat();
-		Imgproc.findContours(c, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-		
-		for(int i=0;i<contours.size();i++){
-			
-			double area = Imgproc.contourArea(contours.get(i));
-			
-				if(area>1000){
-					
-					 Imgproc.drawContours(m, contours, i,new Scalar (0, 255, 0), 3);
-				}
-			
-			
-			
-		}
 		return toBufferedImage(m);
 
 	} 
  
-	public BufferedImage filterSkinColor() {
+	public BufferedImage filterSkinColor2() {
 		Mat m = new Mat();
 		Mat c = new Mat();
 
@@ -255,7 +351,7 @@ public class CamRecorder {
 				
 				double area = Imgproc.contourArea(contours.get(i));
 				
-					if(area>1000){
+					if(area>10000){
 						
 						 Imgproc.drawContours(m, contours, i,new Scalar (0, 255, 0), 3);
 					}
@@ -360,5 +456,43 @@ public class CamRecorder {
 
 		return value;
 	}
-
+	
+	public  List<Mat> cluster(Mat cutout, int k) {
+		Mat samples = cutout.reshape(1, cutout.cols() * cutout.rows());
+		Mat samples32f = new Mat();
+		samples.convertTo(samples32f, CvType.CV_32F, 1.0 / 255.0);
+		
+		Mat labels = new Mat();
+		TermCriteria criteria = new TermCriteria(TermCriteria.COUNT, 100, 1);
+		Mat centers = new Mat();
+		Core.kmeans(samples32f, k, labels, criteria, 1, Core.KMEANS_PP_CENTERS, centers);		
+		return showClusters(cutout, labels, centers);
+}
+	private  List<Mat> showClusters (Mat cutout, Mat labels, Mat centers) {
+		centers.convertTo(centers, CvType.CV_8UC1, 255.0);
+		centers.reshape(3);
+		
+		List<Mat> clusters = new ArrayList<Mat>();
+		for(int i = 0; i < centers.rows(); i++) {
+			clusters.add(Mat.zeros(cutout.size(), cutout.type()));
+		}
+		
+		Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
+		for(int i = 0; i < centers.rows(); i++) counts.put(i, 0);
+		
+		int rows = 0;
+		for(int y = 0; y < cutout.rows(); y++) {
+			for(int x = 0; x < cutout.cols(); x++) {
+				int label = (int)labels.get(rows, 0)[0];
+				int r = (int)centers.get(label, 2)[0];
+				int g = (int)centers.get(label, 1)[0];
+				int b = (int)centers.get(label, 0)[0];
+				counts.put(label, counts.get(label) + 1);
+				clusters.get(label).put(y, x, b, g, r);
+				rows++;
+			}
+		}
+		System.out.println(counts);
+		return clusters;
+}
 }
