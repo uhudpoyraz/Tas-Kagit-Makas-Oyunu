@@ -3,10 +3,10 @@
 
 ### Java ###
 *.class
-
+target/
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
-
+*.jpg
 # Package Files #
 *.jar
 *.war

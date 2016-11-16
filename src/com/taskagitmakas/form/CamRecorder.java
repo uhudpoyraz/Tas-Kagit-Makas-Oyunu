@@ -15,7 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
- import org.omg.IOP.Codec;
+import org.omg.IOP.Codec;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -29,6 +29,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
+import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.video.BackgroundSubtractorMOG2;
@@ -44,32 +45,20 @@ public class CamRecorder {
 	private int Height, Width;
 	private int hMin, sMin, vMin, hMax, sMax, vMax;
 
-	private static final int SAMPLE_NUM = 7;
-	
- 
+	private static final int SAMPLE_NUM = 1;
 
+	private Imshow im, im2, im3, im4;
 	private Point[][] samplePoints = null;
 	private double[][] avgColor = null;
-	private double[][] avgBackColor = null;
-	private Mat background;
-	private double[] channelsPixel = new double[4];
-	private ArrayList<ArrayList<Double>> averChans = new ArrayList<ArrayList<Double>>();
-	private BackgroundSubtractorMOG2 backgroundSubtractorMOG;
-	private double[][] cLower = new double[SAMPLE_NUM][3];
-	private double[][] cUpper = new double[SAMPLE_NUM][3];
-	private double[][] cBackLower = new double[SAMPLE_NUM][3];
-	private double[][] cBackUpper = new double[SAMPLE_NUM][3];
-	
-	private Scalar lowerBound = new Scalar(0, 0, 0);
-	private Scalar upperBound = new Scalar(0, 0, 0);
-	private int squareLen = 20;
+	private Mat background, grayImage, Image;
+
+	private int squareLen = 50;
 
 	private ColorBlobDetector mDetector;
 	private Mat mSpectrum;
 	int numberOfFingers = 0;
-	
-	double data[] = new double[3];
-	List<double[]> skinColors = new ArrayList<double[]>();
+	private Scalar mBlobColorHsv;
+	private Scalar mBlobColorRgba;
 
 	public VideoCapture getVideoCapture() {
 		return videoCapture;
@@ -79,74 +68,32 @@ public class CamRecorder {
 		this.videoCapture = videoCapture;
 	}
 
-	public int gethMin() {
-		return hMin;
-	}
-
-	public void sethMin(int hMin) {
-		this.hMin = hMin;
-	}
-
-	public int getsMin() {
-		return sMin;
-	}
-
-	public void setsMin(int sMin) {
-		this.sMin = sMin;
-	}
-
-	public int getvMin() {
-		return vMin;
-	}
-
-	public void setvMin(int vMin) {
-		this.vMin = vMin;
-	}
-
-	public int gethMax() {
-		return hMax;
-	}
-
-	public void sethMax(int hMax) {
-		this.hMax = hMax;
-	}
-
-	public int getsMax() {
-		return sMax;
-	}
-
-	public void setsMax(int sMax) {
-		this.sMax = sMax;
-	}
-
-	public int getvMax() {
-		return vMax;
-	}
-
-	public void setvMax(int vMax) {
-		this.vMax = vMax;
-	}
-
 	public CamRecorder() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
+
 		videoCapture = new VideoCapture(0);
- 		//videoCapture = new VideoCapture("/home/uhudpoyraz/Masaüstü/b.mp4");
-		
-		
-		this.hMin = 0;
-		this.hMax = 25;
-		this.sMin = 48;
-		this.sMax = 255;
-		this.vMin = 80;
-		this.vMax = 255;
+		videoCapture.set(10, 0.4);
+		videoCapture.set(13, 0.4);
+		/*
+		 * videoCapture.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, 1280);
+		 * videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 720);
+		 */
+		System.out.println(videoCapture.get(12));
+		im = new Imshow("HSVsmall");
+		im2 = new Imshow("Gray");
+		im3 = new Imshow("HSVFULL");
+
+		im.Window.setResizable(true);
+		im.Window.setResizable(true);
+		im.Window.setResizable(true);
 
 		background = new Mat();
+		Image = new Mat();
 
 		videoCapture.read(background);
-		Core.flip(background,background, 1);
+		Core.flip(background, background, 1);
 		Imgproc.GaussianBlur(background, background, new Size(5, 5), 5, 5);
-	 //	Imgproc.cvtColor(background, background, Imgproc.COLOR_BGR2YCrCb);
+		// Imgproc.cvtColor(background, background, Imgproc.COLOR_BGR2YCrCb);
 
 		int cols, rows;
 
@@ -164,209 +111,139 @@ public class CamRecorder {
 		samplePoints[0][0].x = cols / 2.5;
 		samplePoints[0][0].y = rows / 2.5;
 
-		samplePoints[1][0].x = cols * 4 / 10;
-		samplePoints[1][0].y = rows * 5 / 10;
-
-		samplePoints[2][0].x = cols * 7 / 14;
-		samplePoints[2][0].y = rows * 5 / 14;
-
-		samplePoints[3][0].x = cols / 2;
-		samplePoints[3][0].y = rows * 7 / 14;
-
-		samplePoints[4][0].x = cols / 2.7;
-		samplePoints[4][0].y = rows * 7 / 12;
-
-		samplePoints[5][0].x = cols * 4 / 9;
-		samplePoints[5][0].y = rows * 3 / 5;
-
-		samplePoints[6][0].x = cols * 5 / 10;
-		samplePoints[6][0].y = rows * 3 / 5;
-
 		for (int i = 0; i < SAMPLE_NUM; i++) {
-			samplePoints[i][1].x = samplePoints[i][0].x + squareLen;
-			samplePoints[i][1].y = samplePoints[i][0].y + squareLen;
+			samplePoints[i][1].x = samplePoints[i][0].x + squareLen / 2;
+			samplePoints[i][1].y = samplePoints[i][0].y + squareLen / 2;
 		}
-		
-		
+
 		avgColor = new double[SAMPLE_NUM][3];
-		avgBackColor = new double[SAMPLE_NUM][3];
-		backgroundSubtractorMOG=new BackgroundSubtractorMOG2(3000,64F);
-	   
-	 
-		
 		mDetector = new ColorBlobDetector();
 		mSpectrum = new Mat();
+		mBlobColorHsv = new Scalar(255);
+		mBlobColorRgba = new Scalar(255);
 	}
- 
-	private int LearningTime=0;
-	 public BufferedImage startRecord() {
 
-			Mat m = new Mat();
-			Mat c = new Mat();
+	private int LearningTime = 0;
 
-			this.videoCapture.read(m);
- 			Core.flip(m, m, 1);
-			Imgproc.GaussianBlur(m, m, new Size(3, 3), 1 ,1);
-			 Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2HSV_FULL);
-	 
-		 	 
-			for (int i = 0; i < SAMPLE_NUM; i++) {
+	public BufferedImage startRecord() {
 
-				//Core.putText(m, Integer.toString(i),new Point(samplePoints[i][0].x + squareLen / 2, samplePoints[i][0].y + squareLen / 2)),Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0, 0, 255));
-				Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 1);
-			}
-	 
-			 for (int i = 0; i < SAMPLE_NUM; i++) {
-				// System.out.println("");
-				for (int j = 0; j < 3; j++) {
-					avgColor[i][j] = (c.get((int) (samplePoints[i][0].x + squareLen / 2),
-							(int) (samplePoints[i][0].y + squareLen / 2)))[j];
-					//System.out.print((m.get((int) (samplePoints[i][0].x + squareLen / 2),(int) (samplePoints[i][0].y + squareLen / 2)))[j]+" ");
+		Mat m = new Mat();
+		Mat c = new Mat();
 
-				}
-			} 
-			
-			 mDetector.setHsvColor(new Scalar(avgColor[0][0],avgColor[0][1],avgColor[0][2]));
-			 Imgproc.resize(mDetector.getSpectrum(), mSpectrum, new Size(200, 64));
-			return toBufferedImage(m);
+		this.videoCapture.read(m);
+		Core.flip(m, m, 1);
 
-	 }
-	 
-	 
-	 double iThreshold=0;
-	 public BufferedImage filterSkinColor() {
+		Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2RGBA);
+		Imgproc.GaussianBlur(c, c, new Size(9, 9), 5, 5);
+
+		for (int i = 0; i < SAMPLE_NUM; i++) {
+
+			// Core.putText(m, Integer.toString(i),new
+			// Point(samplePoints[i][0].x + squareLen / 2, samplePoints[i][0].y
+			// + squareLen / 2)),Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0,
+			// 0, 255));
+			Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 1);
+		}
+
+		Rect touchedRect = new Rect();
+
+		int x = (int) (samplePoints[0][0].x + squareLen / 2);
+		int y = (int) (samplePoints[0][0].y + squareLen / 2);
+		touchedRect.x = x;
+		touchedRect.y = y;
+
+		touchedRect.width = (x + 50 < c.cols()) ? x + 50 - touchedRect.x : c.cols() - touchedRect.x;
+		touchedRect.height = (y + 50 < c.rows()) ? y + 50 - touchedRect.y : c.rows() - touchedRect.y;
+
+		Mat touchedRegionRgba = c.submat(touchedRect);
+
+		Mat touchedRegionHsv = new Mat();
+		Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL, 3);
+		im.showImage(touchedRegionHsv);
+
+		mBlobColorHsv = Core.sumElems(touchedRegionHsv);
+		int pointCount = touchedRect.width * touchedRect.height;
+		for (int i = 0; i < mBlobColorHsv.val.length; i++)
+			mBlobColorHsv.val[i] /= pointCount;
+
+		mDetector.setHsvColor(mBlobColorHsv);
+		Imgproc.resize(mDetector.getSpectrum(), mSpectrum, new Size(200, 64));
+		return toBufferedImage(m);
+
+	}
+
+	double iThreshold = 0;
+
+	public BufferedImage filterSkinColor() {
 
 		Mat m = new Mat();
 		Mat c = new Mat();
 		Mat b = new Mat();
 
 		this.videoCapture.read(m);
- 		Core.flip(m, m, 1);
-		Imgproc.GaussianBlur(m, m, new Size(3, 3), 1 ,1);
-	 	
-		mDetector.process(m);
-		
-		List<MatOfPoint> contours = mDetector.getContours(); 
-		 RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(0)	.toArray()));
-
-	        double boundWidth = rect.size.width;
-	        double boundHeight = rect.size.height;
-	        int boundPos = 0;
-
-	        for (int i = 1; i < contours.size(); i++) {
-	            rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(i).toArray()));
-	            if (rect.size.width * rect.size.height > boundWidth * boundHeight) {
-	                boundWidth = rect.size.width;
-	                boundHeight = rect.size.height;
-	                boundPos = i;
-	            }
-	        }
-
-	        Rect boundRect = Imgproc.boundingRect(new MatOfPoint(contours.get(boundPos).toArray()));
-	        Core.rectangle( m, boundRect.tl(), boundRect.br(), new Scalar(255,255,255), 2, 8, 0 );
-		
-	        int rectHeightThresh = 0;
-	        double a = boundRect.br().y - boundRect.tl().y;
-	        a = a * 0.7;
-	        a = boundRect.tl().y + a;
-	        Core.rectangle( m, boundRect.tl(), new Point(boundRect.br().x, a), new Scalar (0, 255, 0), 2, 8, 0 );
-
-	        MatOfPoint2f pointMat = new MatOfPoint2f();
-	        Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(boundPos).toArray()), pointMat, 3, true);
-	        contours.set(boundPos, new MatOfPoint(pointMat.toArray()));
-
-	        MatOfInt hull = new MatOfInt();
-	        MatOfInt4 convexDefect = new MatOfInt4();
-	        Imgproc.convexHull(new MatOfPoint(contours.get(boundPos).toArray()), hull);
-
-	        if(hull.toArray().length < 3) return toBufferedImage(m);
-
-	        Imgproc.convexityDefects(new MatOfPoint(contours.get(boundPos)	.toArray()), hull, convexDefect);
-
-	        List<MatOfPoint> hullPoints = new LinkedList<MatOfPoint>();
-	        List<Point> listPo = new LinkedList<Point>();
-	        for (int j = 0; j < hull.toList().size(); j++) {
-	            listPo.add(contours.get(boundPos).toList().get(hull.toList().get(j)));
-	        }
-
-	        MatOfPoint e = new MatOfPoint();
-	        e.fromList(listPo);
-	        hullPoints.add(e);
-
-	        List<MatOfPoint> defectPoints = new LinkedList<MatOfPoint>();
-	        List<Point> listPoDefect = new LinkedList<Point>();
-	        for (int j = 0; j < convexDefect.toList().size(); j = j+4) {
-	            Point farPoint = contours.get(boundPos).toList().get(convexDefect.toList().get(j+2));
-	            Integer depth = convexDefect.toList().get(j+3);
-	            if(depth > iThreshold && farPoint.y < a){
-	                listPoDefect.add(contours.get(boundPos).toList().get(convexDefect.toList().get(j+2)));
-	            }
-	             
-	        }
-
-	        MatOfPoint e2 = new MatOfPoint();
-	        e2.fromList(listPo);
-	        defectPoints.add(e2);
- 
-	        Imgproc.drawContours(m, hullPoints, -1, new Scalar (0, 255, 0), 3);
-
-	        int defectsTotal = (int) convexDefect.total();
- 
-	   
-
- 
-		
-		
-		 
-		return toBufferedImage(m);
-
-	} 
- 
-	public BufferedImage filterSkinColor2() {
-		Mat m = new Mat();
-		Mat c = new Mat();
-
-		this.videoCapture.read(m);
-	 	Imgproc.cvtColor(m, m, Imgproc.COLOR_RGB2HSV); 
 		Core.flip(m, m, 1);
-		 Imgproc.GaussianBlur(m, m, new Size(5, 5), 5, 5);
-	
-		
-		double minColor[] = findMaxColor(avgColor, 1);
-		double maxColor[] = findMaxColor(avgColor, 0);
+		m.copyTo(Image);
+		m.copyTo(c);
+		// Imgproc.GaussianBlur(m, c, new Size(3, 3), 5 ,5);
 
-		
-		Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(9, 9));
-		Imgproc.dilate(m, m, element);
-		Imgproc.erode(m, m, element);
-		
-		
-		Core.inRange(m, new Scalar(minColor[0]-5, minColor[1]-5, minColor[2]-5),new Scalar((maxColor[0]), maxColor[1], maxColor[2]+5), c);
-		
-			List<MatOfPoint> contours=new ArrayList<MatOfPoint>();
-			Mat hierarchy=new Mat();
-			Imgproc.findContours(c, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-			
-			for(int i=0;i<contours.size();i++){
-				
-				double area = Imgproc.contourArea(contours.get(i));
-				
-					if(area>10000){
-						
-						 Imgproc.drawContours(m, contours, i,new Scalar (0, 255, 0), 3);
-					}
-				
-				
-				
+		List<MatOfPoint> contours = mDetector.getContours();
+		mDetector.process(c);
+		RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(0).toArray()));
+
+		im3.showImage(mDetector.mHsvMat);
+
+		double boundWidth = rect.size.width;
+		double boundHeight = rect.size.height;
+		int boundPos = 0;
+
+		for (int i = 1; i < contours.size(); i++) {
+			rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(i).toArray()));
+			if (rect.size.width * rect.size.height > boundWidth * boundHeight) {
+				boundWidth = rect.size.width;
+				boundHeight = rect.size.height;
+				boundPos = i;
 			}
-		
-		
-		System.out.println("in filterSkinColor");
-		System.out.println(minColor[0] + " " + minColor[1] + " " + minColor[2]);
+		}
 
-		System.out.println((maxColor[0]) + " " + (maxColor[1]) + " " + (maxColor[2]));
+		Rect boundRect = Imgproc.boundingRect(new MatOfPoint(contours.get(boundPos).toArray()));
+		Core.rectangle(m, boundRect.tl(), boundRect.br(), new Scalar(255, 255, 255), 2, 8, 0);
 
-		 
+		int rectHeightThresh = 0;
+		double a = boundRect.br().y - boundRect.tl().y;
+		a = a * 0.7;
+		a = boundRect.tl().y + a;
+		Core.rectangle(m, boundRect.tl(), new Point(boundRect.br().x, a), new Scalar(0, 255, 0), 2, 8, 0);
+
+		MatOfPoint2f pointMat = new MatOfPoint2f();
+		Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(boundPos).toArray()), pointMat, 3, true);
+		contours.set(boundPos, new MatOfPoint(pointMat.toArray()));
+
+		MatOfInt hull = new MatOfInt();
+		MatOfInt4 convexDefect = new MatOfInt4();
+		Imgproc.convexHull(new MatOfPoint(contours.get(boundPos).toArray()), hull);
+
+		if (hull.toArray().length < 3)
+			return toBufferedImage(m);
+
+		Imgproc.convexityDefects(new MatOfPoint(contours.get(boundPos).toArray()), hull, convexDefect);
+
+		List<MatOfPoint> hullPoints = new LinkedList<MatOfPoint>();
+		List<Point> listPo = new LinkedList<Point>();
+		for (int j = 0; j < hull.toList().size(); j++) {
+			listPo.add(contours.get(boundPos).toList().get(hull.toList().get(j)));
+		}
+
+		MatOfPoint e = new MatOfPoint();
+		e.fromList(listPo);
+		hullPoints.add(e);
+
+		Imgproc.drawContours(m, hullPoints, -1, new Scalar(0, 255, 0), 3);
+
+		int defectsTotal = (int) convexDefect.total();
+
+		im2.showImage(mDetector.mGray);
+
+		// mDetector.mGray.copyTo(grayImage);
 		return toBufferedImage(m);
 
 	}
@@ -394,105 +271,11 @@ public class CamRecorder {
 		this.videoCapture.release();
 	}
 
-	public boolean R1(int R, int G, int B) {
-		boolean e1 = (R > 95) && (G > 40) && (B > 20)
-				&& ((Math.max(R, Math.max(G, B)) - Math.min(R, Math.min(G, B))) > 15) && (Math.abs(R - G) > 15)
-				&& (R > G) && (R > B);
-		boolean e2 = (R > 220) && (G > 210) && (B > 170) && (Math.abs(R - G) <= 15) && (R > B) && (G > B);
-		return (e1 || e2);
+	public void saveImage() {
+
+		Highgui.imwrite("image.jpg", Image);
+		Highgui.imwrite("gray.jpg", grayImage);
+
 	}
 
-	public boolean R2(float Y, float Cr, float Cb) {
-		boolean e3 = Cr <= 1.5862 * Cb + 20;
-		boolean e4 = Cr >= 0.3448 * Cb + 76.2069;
-		boolean e5 = Cr >= -4.5652 * Cb + 234.5652;
-		boolean e6 = Cr <= -1.15 * Cb + 301.75;
-		boolean e7 = Cr <= -2.2857 * Cb + 432.85;
-		return e3 && e4 && e5 && e6 && e7;
-	}
-
-	public boolean R3(float H, float S, float V) {
-		return (H < 25) || (H > 230);
-	}
-
-	/*
-	 * 0 maxColorValue otherwise min colorValue
-	 * 
-	 */
-	public double[] findMaxColor(double[][] avgColor, int type) {
-
-		double value[] = { 0.0, 0.0, 0.0 };
-		if (type != 0) {
-
-			value[0] = 999.0;
-			value[1] = 999.0;
-			value[2] = 999.0;
-		}
-
-		for (int i = 0; i < SAMPLE_NUM; i++) {
-
-			for (int j = 0; j < 3; j++) {
-
-				if (type == 0) {
-
-					if (avgColor[i][j] > value[j]) {
-
-						value[j] = avgColor[i][j];
-
-					}
-				} else {
-
-					if (avgColor[i][j] < value[j]) {
-
-						value[j] = avgColor[i][j];
-
-					}
-
-				}
-
-			}
-
-		}
-
-		return value;
-	}
-	
-	public  List<Mat> cluster(Mat cutout, int k) {
-		Mat samples = cutout.reshape(1, cutout.cols() * cutout.rows());
-		Mat samples32f = new Mat();
-		samples.convertTo(samples32f, CvType.CV_32F, 1.0 / 255.0);
-		
-		Mat labels = new Mat();
-		TermCriteria criteria = new TermCriteria(TermCriteria.COUNT, 100, 1);
-		Mat centers = new Mat();
-		Core.kmeans(samples32f, k, labels, criteria, 1, Core.KMEANS_PP_CENTERS, centers);		
-		return showClusters(cutout, labels, centers);
-}
-	private  List<Mat> showClusters (Mat cutout, Mat labels, Mat centers) {
-		centers.convertTo(centers, CvType.CV_8UC1, 255.0);
-		centers.reshape(3);
-		
-		List<Mat> clusters = new ArrayList<Mat>();
-		for(int i = 0; i < centers.rows(); i++) {
-			clusters.add(Mat.zeros(cutout.size(), cutout.type()));
-		}
-		
-		Map<Integer, Integer> counts = new HashMap<Integer, Integer>();
-		for(int i = 0; i < centers.rows(); i++) counts.put(i, 0);
-		
-		int rows = 0;
-		for(int y = 0; y < cutout.rows(); y++) {
-			for(int x = 0; x < cutout.cols(); x++) {
-				int label = (int)labels.get(rows, 0)[0];
-				int r = (int)centers.get(label, 2)[0];
-				int g = (int)centers.get(label, 1)[0];
-				int b = (int)centers.get(label, 0)[0];
-				counts.put(label, counts.get(label) + 1);
-				clusters.get(label).put(y, x, b, g, r);
-				rows++;
-			}
-		}
-		System.out.println(counts);
-		return clusters;
-}
 }
