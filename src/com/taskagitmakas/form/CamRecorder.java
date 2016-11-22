@@ -43,7 +43,7 @@ public class CamRecorder {
 	private JLabel imageLable;
 	private Boolean sizeCustom = false;
 	private int Height, Width;
-	private int hMin, sMin, vMin, hMax, sMax, vMax;
+ 
 
 	private static final int SAMPLE_NUM = 1;
 
