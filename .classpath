@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src">
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
@@ -15,6 +15,27 @@
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/uhudpoyraz/apache-tomcat-8.0.36/lib/catalina.jar"/>
+	<classpathentry kind="lib" path="/home/uhudpoyraz/.m2/repository/org/eclipse/persistence/eclipselink/2.6.1/eclipselink-2.6.1.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.archivename" value="eclipselink-2.6.1.jar"/>
+			<attribute name="maven.groupId" value="org.eclipse.persistence"/>
+			<attribute name="maven.artifactId" value="eclipselink"/>
+			<attribute name="maven.version" value="2.6.1"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/uhudpoyraz/.m2/repository/org/hibernate/hibernate-core/5.2.0.Final/hibernate-core-5.2.0.Final.jar" sourcepath="/home/uhudpoyraz/.m2/repository/org/hibernate/hibernate-core/5.2.0.Final/hibernate-core-5.2.0.Final-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.archivename" value="hibernate-core-5.2.0.Final.jar"/>
+			<attribute name="maven.groupId" value="org.hibernate"/>
+			<attribute name="maven.artifactId" value="hibernate-core"/>
+			<attribute name="maven.version" value="5.2.0.Final"/>
+			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
