@@ -43,7 +43,7 @@ public class CamRecorder {
 	private JLabel imageLable;
 	private Boolean sizeCustom = false;
 	private int Height, Width;
- 
+	private Rect boundRect;
 
 	private static final int SAMPLE_NUM = 1;
 
@@ -72,12 +72,6 @@ public class CamRecorder {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
 		videoCapture = new VideoCapture(0);
-		videoCapture.set(10, 0.4);
-		videoCapture.set(13, 0.4);
-		/*
-		 * videoCapture.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, 1280);
-		 * videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 720);
-		 */
 		System.out.println(videoCapture.get(12));
 		im = new Imshow("HSVsmall");
 		im2 = new Imshow("Gray");
@@ -92,14 +86,13 @@ public class CamRecorder {
 
 		videoCapture.read(background);
 		Core.flip(background, background, 1);
-		Imgproc.GaussianBlur(background, background, new Size(5, 5), 5, 5);
-		// Imgproc.cvtColor(background, background, Imgproc.COLOR_BGR2YCrCb);
+		
 
 		int cols, rows;
 
 		cols = background.cols();
 		rows = background.rows();
-
+		System.out.println(background.size());
 		System.out.println(cols);
 		samplePoints = new Point[SAMPLE_NUM][2];
 		samplePoints = new Point[SAMPLE_NUM][2];
@@ -125,12 +118,13 @@ public class CamRecorder {
 
 	private int LearningTime = 0;
 
-	public BufferedImage startRecord() {
+	public Mat startRecord() {
 
 		Mat m = new Mat();
 		Mat c = new Mat();
 
 		this.videoCapture.read(m);
+		 
 		Core.flip(m, m, 1);
 
 		Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2RGBA);
@@ -138,10 +132,6 @@ public class CamRecorder {
 
 		for (int i = 0; i < SAMPLE_NUM; i++) {
 
-			// Core.putText(m, Integer.toString(i),new
-			// Point(samplePoints[i][0].x + squareLen / 2, samplePoints[i][0].y
-			// + squareLen / 2)),Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0,
-			// 0, 255));
 			Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 1);
 		}
 
@@ -168,13 +158,13 @@ public class CamRecorder {
 
 		mDetector.setHsvColor(mBlobColorHsv);
 		Imgproc.resize(mDetector.getSpectrum(), mSpectrum, new Size(200, 64));
-		return toBufferedImage(m);
+		return (m);
 
 	}
 
 	double iThreshold = 0;
 
-	public BufferedImage filterSkinColor() {
+	public Mat filterSkinColor() {
 
 		Mat m = new Mat();
 		Mat c = new Mat();
@@ -182,9 +172,11 @@ public class CamRecorder {
 
 		this.videoCapture.read(m);
 		Core.flip(m, m, 1);
+	 
 		m.copyTo(Image);
 		m.copyTo(c);
-		// Imgproc.GaussianBlur(m, c, new Size(3, 3), 5 ,5);
+		Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2RGBA);
+		Imgproc.GaussianBlur(c, c, new Size(9, 9), 5, 5);
 
 		List<MatOfPoint> contours = mDetector.getContours();
 		mDetector.process(c);
@@ -223,7 +215,7 @@ public class CamRecorder {
 		Imgproc.convexHull(new MatOfPoint(contours.get(boundPos).toArray()), hull);
 
 		if (hull.toArray().length < 3)
-			return toBufferedImage(m);
+			return (m);
 
 		Imgproc.convexityDefects(new MatOfPoint(contours.get(boundPos).toArray()), hull, convexDefect);
 
@@ -244,10 +236,83 @@ public class CamRecorder {
 		im2.showImage(mDetector.mGray);
 
 		// mDetector.mGray.copyTo(grayImage);
-		return toBufferedImage(m);
+		return (m);
 
 	}
 
+	
+	public Mat train() {
+
+		Mat m = new Mat();
+		Mat c = new Mat();
+		Mat b = new Mat();
+
+		this.videoCapture.read(m);
+		Core.flip(m, m, 1);
+	 
+		m.copyTo(Image);
+		m.copyTo(c);
+		Imgproc.cvtColor(m, c, Imgproc.COLOR_RGB2RGBA);
+		Imgproc.GaussianBlur(c, c, new Size(9, 9), 5, 5);
+
+		List<MatOfPoint> contours = mDetector.getContours();
+		mDetector.process(c);
+		RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(0).toArray()));
+		double boundWidth = rect.size.width;
+		double boundHeight = rect.size.height;
+		int boundPos = 0;
+
+		for (int i = 1; i < contours.size(); i++) {
+			rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(i).toArray()));
+			if (rect.size.width * rect.size.height > boundWidth * boundHeight) {
+				boundWidth = rect.size.width;
+				boundHeight = rect.size.height;
+				boundPos = i;
+			}
+		}
+
+		boundRect = Imgproc.boundingRect(new MatOfPoint(contours.get(boundPos).toArray()));
+		Core.rectangle(m, boundRect.tl(), boundRect.br(), new Scalar(255, 255, 255), 2, 8, 0);
+
+		int rectHeightThresh = 0;
+		double a = boundRect.br().y - boundRect.tl().y;
+		a = a * 0.7;
+		a = boundRect.tl().y + a;
+		Core.rectangle(m, boundRect.tl(), new Point(boundRect.br().x, a), new Scalar(0, 255, 0), 2, 8, 0);
+
+		MatOfPoint2f pointMat = new MatOfPoint2f();
+		Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(boundPos).toArray()), pointMat, 3, true);
+		contours.set(boundPos, new MatOfPoint(pointMat.toArray()));
+
+		MatOfInt hull = new MatOfInt();
+		MatOfInt4 convexDefect = new MatOfInt4();
+		Imgproc.convexHull(new MatOfPoint(contours.get(boundPos).toArray()), hull);
+
+		if (hull.toArray().length < 3)
+			return m;
+
+		Imgproc.convexityDefects(new MatOfPoint(contours.get(boundPos).toArray()), hull, convexDefect);
+
+		List<MatOfPoint> hullPoints = new LinkedList<MatOfPoint>();
+		List<Point> listPo = new LinkedList<Point>();
+		for (int j = 0; j < hull.toList().size(); j++) {
+			listPo.add(contours.get(boundPos).toList().get(hull.toList().get(j)));
+		}
+
+		MatOfPoint e = new MatOfPoint();
+		e.fromList(listPo);
+		hullPoints.add(e);
+
+		Imgproc.drawContours(m, hullPoints, -1, new Scalar(0, 255, 0), 3);
+
+		int defectsTotal = (int) convexDefect.total();
+
+			// mDetector.mGray.copyTo(grayImage);
+		return m;
+
+	}
+	
+	
 	public BufferedImage toBufferedImage(Mat m) {
 		int type = BufferedImage.TYPE_BYTE_GRAY;
 		if (m.channels() > 1) {
@@ -272,10 +337,18 @@ public class CamRecorder {
 	}
 
 	public void saveImage() {
+		Mat frameFromCam=new Mat();
+		Imgproc.resize(Image.submat(boundRect), frameFromCam, new Size(64, 48));
 
-		Highgui.imwrite("image.jpg", Image);
-		Highgui.imwrite("gray.jpg", grayImage);
+		Highgui.imwrite("image2.jpg", frameFromCam);
+		Highgui.imwrite("image.jpg", Image.submat(boundRect));
+		//Highgui.imwrite("gray.jpg", mDetector.mGray.submat(boundRect));
+	 
 
+	}
+	public Mat getImage(){
+		
+		return this.Image;
 	}
 
 }

@@ -2,17 +2,11 @@ package com.taskagitmakas.dao;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.TypedQuery;
-import javax.transaction.Transaction;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
 import com.taskagitmakas.entity.Image;
-
-import javassist.bytecode.SignatureAttribute.ClassType;
 
 public class ImageImp implements ImageDao{
 

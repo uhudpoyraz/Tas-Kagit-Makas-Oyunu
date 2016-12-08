@@ -175,7 +175,7 @@ public class KNN {
 			}
 		}
 
-		 public void run(Image image){
+		 public void testFromDB(Image image){
  
 				int k = 5;// # of neighbours  
 				 
@@ -186,18 +186,13 @@ public class KNN {
 					imagesSampleList.add(new ImageSamples(description[b]," "+myTrainSet.get(b).getClassType()+""));
 		
 				}
-				System.out.println("sampleSize:"+myTrainSet.size());
-
 				
-			
-				//System.out.println(image.getId());
 				double[] query=new double[5940];
 				String data[]=image.getHogDescriptionVector().split(",");
 				 int xx=0;
 				  for(int i=0;i<image.getRowCount();i++){
 					  query[xx]=Double.parseDouble(data[i]);
 
-					//  System.out.println(i+" "+j);
 					  xx++;
 				 } 
 
@@ -208,11 +203,9 @@ public class KNN {
 						dist += Math.pow(sample.hogDescription[j] - query[j], 2) ;
 
 					}
-					//System.out.print("aaaa"+dist);    	     
 		 
 					double distance = Math.sqrt( dist );
 					resultList.add(new Result(distance,sample.classType));
-					//System.out.println("aaa"+distance);
 				} 
 
 				//System.out.println(resultList);
@@ -229,6 +222,47 @@ public class KNN {
 
 				
 			}
+		 
+		 public void testFromDescription(double[] descriptionFromUser){
+			 
+				int k = 157;// # of neighbours  
+				 
+				List<ImageSamples> imagesSampleList = new ArrayList<ImageSamples>();
+				List<Result> resultList = new ArrayList<Result>();				
+				for(int b=0;b<myTrainSet.size();b++){
+					
+					imagesSampleList.add(new ImageSamples(description[b]," "+myTrainSet.get(b).getClassType()+""));
+		
+				}
+			 
+
+		 		//find disnaces
+				for(ImageSamples sample : imagesSampleList){
+					double dist = 0.0;  
+					for(int j = 0; j < sample.hogDescription.length; j++){    	     
+						dist += Math.pow(sample.hogDescription[j] - descriptionFromUser[j], 2) ;
+
+					}
+		 
+					double distance = Math.sqrt( dist );
+					resultList.add(new Result(distance,sample.classType));
+				} 
+
+				//System.out.println(resultList);
+				Collections.sort(resultList, new DistanceComparator());
+				String[] ss = new String[k];
+				for(int x = 0; x < k; x++){
+					System.out.println(resultList.get(x).classType+ " .... " + resultList.get(x).distance);
+					//get classes of k nearest instances (city names) from the list into an array
+					ss[x] = resultList.get(x).classType;
+				}
+				String majClass = findMajorityClass(ss);
+				System.out.println("Class of new instance is: "+majClass);               
+		 
+
+				
+			}
+		 
 		 
 		 
 	}

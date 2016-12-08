@@ -1,50 +1,21 @@
 package com.taskagitmakas.form;
-
 import java.awt.EventQueue;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JSplitPane;
-import java.awt.GridBagLayout;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
-import javax.swing.border.BevelBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.JMenuBar;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class MainForm {
 
-	public JFrame frame;
-	private static ImageIcon image;
-	private static JLabel imageLabel = new JLabel("image");
-	private Boolean SizeCustom;
-	private int Height, Width;
-	private static BufferedImage imageFromCam;
-	static CamRecorder vcam;
-	static boolean isKeyPress = true;
+	private JFrame frame;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
- 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -55,41 +26,13 @@ public class MainForm {
 				}
 			}
 		});
-
-		vcam = new CamRecorder();
-
-		while (isKeyPress) {
-			imageFromCam = vcam.startRecord();
-			
-			
-			if (imageFromCam != null) {
-				image.setImage(imageFromCam);
-				imageLabel.setIcon(image);
-				imageLabel.updateUI();
-			}
-
-		}
-		 
-
-		while (true) {
-			imageFromCam = vcam.filterSkinColor();
-			if (imageFromCam != null) {
-				image.setImage(imageFromCam);
-				imageLabel.setIcon(image);
-				imageLabel.updateUI();
-			}
-
-		}
-		 
 	}
 
 	/**
 	 * Create the application.
 	 */
 	public MainForm() {
-
 		initialize();
-
 	}
 
 	/**
@@ -97,92 +40,49 @@ public class MainForm {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-
-		frame.setBounds(100, 100, 900, 650);
+		frame.setBounds(100, 100, 399, 245);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
-
-		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 678, 591);
-		panel.setToolTipText("");
-		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.setLayout(null);
-		frame.getContentPane().add(panel);
-
-		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(690, 0, 196, 591);
-		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		frame.getContentPane().add(panel_1);
-		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[] { 78, 0, 0 };
-		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_panel_1.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
-		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-		panel_1.setLayout(gbl_panel_1);
- 
-		JButton btnFiltrele = new JButton("Kalibre Et");
-		btnFiltrele.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		
+		JButton btnGame = new JButton("OYUN");
+		btnGame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				
-				isKeyPress = false;
+				new GameForm();
+				
+				
 			}
 		});
-	 
-		GridBagConstraints gbc_btnFiltrele = new GridBagConstraints();
-		gbc_btnFiltrele.insets = new Insets(0, 0, 5, 5);
-		gbc_btnFiltrele.gridx = 0;
-		gbc_btnFiltrele.gridy = 8;
-		panel_1.add(btnFiltrele, gbc_btnFiltrele);
-
-		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
-
-		image = new ImageIcon();
-		Height = panel.getHeight();
-		Width = panel.getWidth();
-
-		imageLabel.setBounds(12, 0, 666, 591);
-		imageLabel.setText("");
-
-		panel.add(imageLabel);
-	}
-
-	public void showImage(Mat img) {
-		if (SizeCustom) {
-			// Imgproc.resize(img, img, new Size(Height, Width));
-		}
-		// Highgui.imencode(".jpg", img, matOfByte);
-		// byte[] byteArray = matOfByte.toArray();
-		BufferedImage bufImage = null;
-		try {
-			// InputStream in = new ByteArrayInputStream(byteArray);
-			// bufImage = ImageIO.read(in);
-			bufImage = toBufferedImage(img);
-
-			image.setImage(bufImage);
-			imageLabel.setIcon(image);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// CREDITS TO DANIEL: http://danielbaggio.blogspot.com.br/ for the improved
-	// version !
-
-	public BufferedImage toBufferedImage(Mat m) {
-		int type = BufferedImage.TYPE_BYTE_GRAY;
-		if (m.channels() > 1) {
-			type = BufferedImage.TYPE_3BYTE_BGR;
-		}
-
-		int bufferSize = m.channels() * m.cols() * m.rows();
-		byte[] b = new byte[bufferSize];
-		m.get(0, 0, b); // get all the pixels
-		BufferedImage image = new BufferedImage(m.cols(), m.rows(), type);
-		final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-		System.arraycopy(b, 0, targetPixels, 0, b.length);
-		return image;
-
+		
+		JButton btnTrain = new JButton("EĞİTİM");
+		btnTrain.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				//frmFlightMap.dispose();
+				
+				System.out.println("acildi");
+				new TrainForm();
+				frame.setVisible(false);
+			}
+});
+		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		groupLayout.setHorizontalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(102)
+					.addComponent(btnGame, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(btnTrain)
+					.addContainerGap(111, Short.MAX_VALUE))
+		);
+		groupLayout.setVerticalGroup(
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
+					.addGap(62)
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(btnTrain, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnGame, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(96, Short.MAX_VALUE))
+		);
+		frame.getContentPane().setLayout(groupLayout);
 	}
 
 }
