@@ -120,7 +120,7 @@ public class MainForm {
 		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
  
-		JButton btnFiltrele = new JButton("El rengi al");
+		JButton btnFiltrele = new JButton("Kalibre Et");
 		btnFiltrele.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -133,20 +133,6 @@ public class MainForm {
 		gbc_btnFiltrele.gridx = 0;
 		gbc_btnFiltrele.gridy = 8;
 		panel_1.add(btnFiltrele, gbc_btnFiltrele);
-		
-		JButton btnKayitEt = new JButton("Kayit Et");
-		btnKayitEt.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				vcam.saveImage();
-				
-			}
-		});
-		GridBagConstraints gbc_btnKayitEt = new GridBagConstraints();
-		gbc_btnKayitEt.insets = new Insets(0, 0, 0, 5);
-		gbc_btnKayitEt.gridx = 0;
-		gbc_btnKayitEt.gridy = 9;
-		panel_1.add(btnKayitEt, gbc_btnKayitEt);
 
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);

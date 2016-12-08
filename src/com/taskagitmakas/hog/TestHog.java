@@ -1,6 +1,9 @@
 package com.taskagitmakas.hog;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -20,58 +23,20 @@ import com.taskagitmakas.dao.ImageDao;
 import com.taskagitmakas.dao.ImageImp;
 import com.taskagitmakas.entity.Image;
 import com.taskagitmakas.form.Imshow;
+import com.taskagitmakas.hog.KNN.ImageSamples;
+import com.taskagitmakas.hog.KNN.DistanceComparator;
+import com.taskagitmakas.hog.KNN.Result;
 
 public class TestHog {
-
-	public static void main(String[] args) throws IOException, DocumentException {
-
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
-		Hog hog = new Hog("Set1/Kagit0/", new Size(8, 8), new Size(4, 4), new Size(4, 4), new Size(0, 0), new Size(0, 0),9);
-		ImageDao imageDao=new ImageImp();
-		
-		
  
- /*
-		
- 
-		for (int i = 0; i < 19; i++) {
-			for (int j = 10; j < 20; j++) {
-				String path = i + "/" + j + ".jpg";
-				hog.add1	(path);
-				// System.out.println(path);
-			}
+	public static void main(String[] args) {
 
-		}
-
-		System.out.println(hog.descriptorsList.size());
- 		for (int i = 0; i < hog.descriptorsList.size(); i++) {
-			System.out.println(i + " İşleniyor...");
-
-			String myDescription = "";
-
-			for (int j = 0; j < hog.descriptorsList.get(0).rows(); j++) {
-
-				myDescription = myDescription + hog.descriptorsList.get(i).get(j, 0)[0] + ",";
-
-			}
-
-			Image image=new Image();
-			image.setRowCount(hog.descriptorsList.get(0).rows());
-			image.setColCount(hog.descriptorsList.get(0).cols());
-			image.setHogDescriptionVector(myDescription);
-			image.setClassType(2);
-			
-			imageDao.insert(image);
-
-		}
-	 */	
-		hog.createSVM();
 		 
-		System.out.println("Bitti");
- 
 
-		
+		KNN kn=new KNN();
+		Image image=kn.imageService.get(1137);
+		kn.run(image);
+	
 	}
 
 }

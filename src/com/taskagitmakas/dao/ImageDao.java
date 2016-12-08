@@ -8,6 +8,8 @@ public interface ImageDao {
 
 	
 	public void insert(Image image);
-	public void get(int id);
+	public Image get(int id);
 	public List<Image> all();
+	public List<Image> getSampleByCount(int classType,int count);
+
 }

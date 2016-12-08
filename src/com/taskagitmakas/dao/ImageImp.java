@@ -12,6 +12,8 @@ import org.hibernate.cfg.Configuration;
 
 import com.taskagitmakas.entity.Image;
 
+import javassist.bytecode.SignatureAttribute.ClassType;
+
 public class ImageImp implements ImageDao{
 
 	 Session session;
@@ -32,8 +34,16 @@ public class ImageImp implements ImageDao{
 	}
 
 	@Override
-	public void get(int id) {
-		// TODO Auto-generated method stub
+	public Image get(int id) {
+
+
+		session=sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		
+		Image image=session.get(Image.class, id);
+		session.getTransaction().commit();
+		
+		return image;
 		
 	}
 
@@ -43,7 +53,7 @@ public class ImageImp implements ImageDao{
 		session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 
-		TypedQuery<Image> query = session.createQuery("from Image order by id asc", Image.class);
+		TypedQuery<Image> query = session.createQuery("from Image", Image.class);
 		list=query.getResultList();
  		session.getTransaction().commit(); 
 
@@ -51,4 +61,19 @@ public class ImageImp implements ImageDao{
  
 	}
 
+	
+	@Override
+	public List<Image> getSampleByCount(int classType,int count) {
+		List<Image> list=new ArrayList<Image>();
+		session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+
+		TypedQuery<Image> query = session.createQuery("from Image where classType="+classType, Image.class);
+		list=query.setMaxResults(count).getResultList();
+ 		session.getTransaction().commit(); 
+
+		return list;
+ 
+	}
+	
 }
