@@ -70,7 +70,13 @@ public class Hog {
 	public void addFromImageFile(String path, int classType) {
 
 		Mat img = new Mat();
-		img = Highgui.imread(directoryPath + path);
+		img = Highgui.imread(path);
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+		Date date = new Date();
+		//dateFormat.format(date)
+			
+		Highgui.imwrite("train/"+dateFormat.format(date)+"_"+classType+".jpg",img);
 		Imgproc.resize(img, img, new Size(64, 48));
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 		MatOfFloat descriptor = new MatOfFloat();

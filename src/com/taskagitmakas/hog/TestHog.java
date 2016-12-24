@@ -14,14 +14,20 @@ public class TestHog {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
 
-		KNN kn=new KNN();
+	 
 		Hog hog=new Hog();
-		Mat image =new Mat();
-		image=Highgui.imread("image2.jpg");
-		double[] a=hog.getDescriptionFromMat(image);
+		Imshow im=new Imshow("a");
 		
-		System.out.println(a.length);
 	
+		/*for(int i=0;i<16;i++){
+	
+ 		 
+		 hog.addFromImageFile("MAKAS/"+i+".png", 3);
+		
+		}*/
+		 
+	
+		System.out.println("bittis");
 	}
 
 }
