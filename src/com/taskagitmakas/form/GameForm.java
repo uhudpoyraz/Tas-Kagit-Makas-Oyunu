@@ -175,7 +175,7 @@ public class GameForm {
 				 
 				
 			 
-				 knn.testFromDescription(hog.getDescriptionFromMat(vcam.getImage()));
+				 knn.testFromDescription(hog.getDescriptionFromMat(vcam.saveImage()));
 				 
 			 
 				

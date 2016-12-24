@@ -219,13 +219,11 @@ public class KNN {
 				String majClass = findMajorityClass(ss);
 				System.out.println("Class of new instance is: "+majClass);               
 		 
-
-				
 			}
 		 
 		 public void testFromDescription(double[] descriptionFromUser){
 			 
-				int k = 157;// # of neighbours  
+				int k = 3;// # of neighbours  
 				 
 				List<ImageSamples> imagesSampleList = new ArrayList<ImageSamples>();
 				List<Result> resultList = new ArrayList<Result>();				

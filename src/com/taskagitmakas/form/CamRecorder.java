@@ -336,15 +336,14 @@ public class CamRecorder {
 		this.videoCapture.release();
 	}
 
-	public void saveImage() {
+	public Mat saveImage() {
 		Mat frameFromCam=new Mat();
-		Imgproc.resize(Image.submat(boundRect), frameFromCam, new Size(64, 48));
+		frameFromCam=Image.submat(boundRect);
 
-		Highgui.imwrite("image2.jpg", frameFromCam);
-		Highgui.imwrite("image.jpg", Image.submat(boundRect));
+		
 		//Highgui.imwrite("gray.jpg", mDetector.mGray.submat(boundRect));
 	 
-
+		return frameFromCam;
 	}
 	public Mat getImage(){
 		

@@ -209,9 +209,9 @@ public class TrainForm {
 						
 						classType=3;
 					}
-					vcam.saveImage();
-					Imgproc.resize(frameFromCam, frameFromCam, new Size(64, 48));
-					hog.addFromMat(frameFromCam, classType);
+					
+							
+ 					hog.addFromMat(vcam.saveImage(), classType);
 			
 					
 					

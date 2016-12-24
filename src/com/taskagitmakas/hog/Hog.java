@@ -93,7 +93,10 @@ public class Hog {
 
 	public void addFromMat(Mat img, int classType) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		Highgui.imwrite("image2.jpg", img);
+		
 		Imgproc.resize(img, img, new Size(64, 48));
+		Highgui.imwrite("image.jpg", img);
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 		MatOfFloat descriptor = new MatOfFloat();
 		MatOfPoint location = new MatOfPoint();
@@ -111,13 +114,16 @@ public class Hog {
 		image.setColCount(descriptor.cols());
 		image.setHogDescriptionVector(myDescription);
 		image.setClassType(classType);
-		imageService.insert(image);
+		 imageService.insert(image);
 	}
 	
 	public double[] getDescriptionFromMat(Mat img) {
 		System.out.println("girdi");
 
+		Highgui.imwrite("image2.jpg", img);
+		
 		Imgproc.resize(img, img, new Size(64, 48));
+		Highgui.imwrite("image.jpg", img);
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 		MatOfFloat descriptor = new MatOfFloat();
 		MatOfPoint location = new MatOfPoint();
