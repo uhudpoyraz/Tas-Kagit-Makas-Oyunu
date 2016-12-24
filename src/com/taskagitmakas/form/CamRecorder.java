@@ -339,10 +339,6 @@ public class CamRecorder {
 	public Mat saveImage() {
 		Mat frameFromCam=new Mat();
 		frameFromCam=Image.submat(boundRect);
-
-		
-		//Highgui.imwrite("gray.jpg", mDetector.mGray.submat(boundRect));
-	 
 		return frameFromCam;
 	}
 	public Mat getImage(){

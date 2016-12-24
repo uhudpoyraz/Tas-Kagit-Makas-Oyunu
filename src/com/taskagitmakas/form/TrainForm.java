@@ -212,10 +212,7 @@ public class TrainForm {
 					
 							
  					hog.addFromMat(vcam.saveImage(), classType);
-			
-					
-					
-					
+	
 					
 					
 				}

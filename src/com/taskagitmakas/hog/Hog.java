@@ -1,6 +1,9 @@
 package com.taskagitmakas.hog;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.opencv.core.Core;
@@ -93,10 +96,13 @@ public class Hog {
 
 	public void addFromMat(Mat img, int classType) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Highgui.imwrite("image2.jpg", img);
 		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+		Date date = new Date();
+		//dateFormat.format(date)
+			
+		Highgui.imwrite("train/"+dateFormat.format(date)+"_"+classType+".jpg",img);
 		Imgproc.resize(img, img, new Size(64, 48));
-		Highgui.imwrite("image.jpg", img);
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 		MatOfFloat descriptor = new MatOfFloat();
 		MatOfPoint location = new MatOfPoint();
@@ -118,12 +124,11 @@ public class Hog {
 	}
 	
 	public double[] getDescriptionFromMat(Mat img) {
-		System.out.println("girdi");
-
-		Highgui.imwrite("image2.jpg", img);
 		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
+		Date date = new Date();
+		Highgui.imwrite("test/"+dateFormat.format(date)+".jpg",img);
 		Imgproc.resize(img, img, new Size(64, 48));
-		Highgui.imwrite("image.jpg", img);
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 		MatOfFloat descriptor = new MatOfFloat();
 		MatOfPoint location = new MatOfPoint();
