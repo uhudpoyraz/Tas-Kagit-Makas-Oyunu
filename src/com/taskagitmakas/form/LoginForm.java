@@ -5,18 +5,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
 import com.taskagitmakas.dao.UserDao;
 import com.taskagitmakas.dao.UserImp;
 import com.taskagitmakas.entity.User;
-
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import javax.swing.JComboBox;
 import java.awt.Insets;
-import javax.swing.DefaultComboBoxModel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;

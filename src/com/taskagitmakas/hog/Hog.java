@@ -33,17 +33,16 @@ public class Hog {
 	public List<MatOfPoint> locationsList;
 	public ImageDao imageService;
 
-	public Hog(String directoryPath, Size blockSize, Size cellSize, Size blockStride, Size winStride, Size padding,
+	public Hog(Size blockSize, Size cellSize, Size blockStride, Size winStride, Size padding,
 			int bin) {
   
-		this.directoryPath = directoryPath;
+		
 		this.blockSize = blockSize; //new Size(8, 8)
 		this.cellSize = cellSize;//new Size(4, 4)
 		this.blockStride = blockStride;//new Size(4, 4)
 		this.winStride = winStride;//new Size(0, 0)
 		this.padding = padding;//new Size(0, 0)
 		this.bin = bin; //9
-		this.directoryPath = directoryPath;
 		this.blockSize = new Size(8, 8);
 		this.cellSize = new Size(4, 4);
 		this.blockStride = new Size(4, 4);
@@ -74,9 +73,7 @@ public class Hog {
 		img = Highgui.imread(path);
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
-		Date date = new Date();
-		//dateFormat.format(date)
-			
+		Date date = new Date();			
 		Highgui.imwrite("train/"+dateFormat.format(date)+"_"+classType+".jpg",img);
 		Imgproc.resize(img, img, new Size(64, 48));
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
@@ -84,14 +81,12 @@ public class Hog {
 		MatOfPoint location = new MatOfPoint();
 		HOGDescriptor hogDescriptor = new HOGDescriptor(new Size(64, 48), blockSize, blockStride, cellSize, bin);
 		hogDescriptor.compute(img, descriptor, winStride, padding, location);
-
 		String myDescription = "";
-
-		for (int j = 0; j < descriptor.rows(); j++) {
-
-			myDescription = myDescription + descriptor.get(j, 0)[0] + ",";
-
-		}
+			for (int j = 0; j < descriptor.rows(); j++) {
+	
+				myDescription = myDescription + descriptor.get(j, 0)[0] + ",";
+	
+			}
 
 		Image image = new Image();
 		image.setRowCount(descriptor.rows());
@@ -103,11 +98,8 @@ public class Hog {
 
 	public void addFromMat(Mat img, int classType) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
 		Date date = new Date();
-		//dateFormat.format(date)
-			
 		Highgui.imwrite("train/"+dateFormat.format(date)+"_"+LoginForm.selectedUser.getId()+"_"+classType+".jpg",img);
 		Imgproc.resize(img, img, new Size(64, 48));
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
@@ -116,12 +108,10 @@ public class Hog {
 		HOGDescriptor hogDescriptor = new HOGDescriptor(new Size(64, 48), blockSize, blockStride, cellSize, bin);
 		hogDescriptor.compute(img, descriptor, winStride, padding, location);
 		String myDescription = "";
-
-		for (int j = 0; j < descriptor.rows(); j++) {
-
-			myDescription = myDescription + descriptor.get(j, 0)[0] + ",";
-		}
-
+			for (int j = 0; j < descriptor.rows(); j++) {
+	
+				myDescription = myDescription + descriptor.get(j, 0)[0] + ",";
+			}
 		Image image = new Image();
 		image.setRowCount(descriptor.rows());
 		image.setColCount(descriptor.cols());
@@ -157,12 +147,8 @@ public class Hog {
 
 		Mat image = new Mat();
 		image = Highgui.imread(directoryPath + path);
-
-		// System.out.println("Dosya Yolu: "+directoryPath+path);
 		Imgproc.resize(image, image, new Size(64, 48));
 		Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY);
-		// im.showImage(image);
-
 		MatOfFloat descriptor = new MatOfFloat();
 		MatOfPoint location = new MatOfPoint();
 		HOGDescriptor hogDescriptor = new HOGDescriptor(new Size(64, 48), blockSize, blockStride, cellSize, bin);
@@ -170,40 +156,5 @@ public class Hog {
 		descriptorsList.add(descriptor);
 		locationsList.add(location);
 	}
-
-	/*public void createSVM() throws DocumentException {
-		List<Image> imageList = new ArrayList<Image>();
-		imageList = imageService.all();
-		Mat hogDescription = new Mat(new Size(imageList.size(), imageList.get(0).getRowCount()), CvType.CV_32FC1);
-		Mat label = new Mat(new Size(5940, 1), CvType.CV_32FC1, new Scalar(-1.0));
-
-		int j = 0;
-		for (Image image : imageList) {
-
-			String data[] = image.getHogDescriptionVector().split(",");
-			for (int i = 0; i < image.getRowCount(); i++) {
-
-				hogDescription.put(i, j, Double.parseDouble(data[i]));
-
-				// System.out.println(i+" "+j);
-			}
-
-			label.put(0, j, image.getClassType());
-			j++;
-
-		}
-
-		System.out.println(hogDescription.size());
-		System.out.println(label.size());
-
-		CvSVM svm = new CvSVM();
-		CvSVMParams params = new CvSVMParams();
-		params.set_svm_type(svm.C_SVC);
-		params.set_kernel_type(svm.LINEAR);
-		TermCriteria termCrit = new TermCriteria(TermCriteria.COUNT, 10000, 1e-6);
-		params.set_term_crit(termCrit);
-		svm.train(hogDescription, label, new Mat(), new Mat(), params);
-		svm.save("trainedSVM.xml");
-	}*/
 
 }

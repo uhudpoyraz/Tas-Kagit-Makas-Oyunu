@@ -1,6 +1,5 @@
 package com.taskagitmakas.form;
 
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,17 +15,13 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
-
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
+import com.taskagitmakas.hog.CamRecorder;
 import com.taskagitmakas.hog.Hog;
-
 import javax.swing.JRadioButton;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 public class TrainForm {
  
 

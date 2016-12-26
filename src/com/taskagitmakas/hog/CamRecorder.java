@@ -1,23 +1,13 @@
-package com.taskagitmakas.form;
+package com.taskagitmakas.hog;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-
-import org.omg.IOP.Codec;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfInt4;
@@ -28,29 +18,22 @@ import org.opencv.core.RotatedRect;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.core.TermCriteria;
-import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.video.BackgroundSubtractorMOG2;
+
+import com.taskagitmakas.form.Imshow;
 
 public class CamRecorder {
 
 	private VideoCapture videoCapture;
 
 	public JFrame Window;
-	private ImageIcon image;
-	private JLabel imageLable;
-	private Boolean sizeCustom = false;
-	private int Height, Width;
 	private Rect boundRect;
 
 	private static final int SAMPLE_NUM = 1;
-
-	private Imshow im, im2, im3, im4;
+	private Imshow im, im2, im3;
 	private Point[][] samplePoints = null;
-	private double[][] avgColor = null;
-	private Mat background, grayImage, Image;
+	private Mat background, Image;
 
 	private int squareLen = 50;
 
@@ -58,8 +41,6 @@ public class CamRecorder {
 	private Mat mSpectrum;
 	int numberOfFingers = 0;
 	private Scalar mBlobColorHsv;
-	private Scalar mBlobColorRgba;
-
 	public VideoCapture getVideoCapture() {
 		return videoCapture;
 	}
@@ -109,14 +90,11 @@ public class CamRecorder {
 			samplePoints[i][1].y = samplePoints[i][0].y + squareLen / 2;
 		}
 
-		avgColor = new double[SAMPLE_NUM][3];
 		mDetector = new ColorBlobDetector();
 		mSpectrum = new Mat();
 		mBlobColorHsv = new Scalar(255);
-		mBlobColorRgba = new Scalar(255);
+		new Scalar(255);
 	}
-
-	private int LearningTime = 0;
 
 	public Mat startRecord() {
 
@@ -168,8 +146,6 @@ public class CamRecorder {
 
 		Mat m = new Mat();
 		Mat c = new Mat();
-		Mat b = new Mat();
-
 		this.videoCapture.read(m);
 		Core.flip(m, m, 1);
 	 
@@ -200,8 +176,7 @@ public class CamRecorder {
 		Rect boundRect = Imgproc.boundingRect(new MatOfPoint(contours.get(boundPos).toArray()));
 		Core.rectangle(m, boundRect.tl(), boundRect.br(), new Scalar(255, 255, 255), 2, 8, 0);
 
-		int rectHeightThresh = 0;
-		double a = boundRect.br().y - boundRect.tl().y;
+ 		double a = boundRect.br().y - boundRect.tl().y;
 		a = a * 0.7;
 		a = boundRect.tl().y + a;
 		Core.rectangle(m, boundRect.tl(), new Point(boundRect.br().x, a), new Scalar(0, 255, 0), 2, 8, 0);

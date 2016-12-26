@@ -1,13 +1,7 @@
 package com.taskagitmakas.form;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
-import java.awt.FlowLayout;
 import javax.swing.JPanel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-
 import com.taskagitmakas.dao.UserDao;
 import com.taskagitmakas.dao.UserImp;
 import com.taskagitmakas.entity.User;
@@ -17,7 +11,6 @@ import javax.swing.JTextField;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Label;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

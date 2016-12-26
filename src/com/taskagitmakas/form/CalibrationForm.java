@@ -21,6 +21,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.JMenuBar;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+
+import com.taskagitmakas.hog.CamRecorder;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.JButton;
