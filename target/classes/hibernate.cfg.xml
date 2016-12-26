@@ -21,6 +21,7 @@
 
 
        <mapping class="com.taskagitmakas.entity.Image"/>
+       <mapping class="com.taskagitmakas.entity.User"/>
 
     </session-factory>
 </hibernate-configuration>
