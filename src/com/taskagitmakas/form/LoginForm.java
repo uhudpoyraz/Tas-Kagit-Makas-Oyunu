@@ -1,35 +1,57 @@
 package com.taskagitmakas.form;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import java.awt.GridLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import com.taskagitmakas.dao.UserDao;
+import com.taskagitmakas.dao.UserImp;
+import com.taskagitmakas.entity.User;
+
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import javax.swing.JComboBox;
 import java.awt.Insets;
-import javax.swing.JTextField;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class LoginForm {
 
-	private JFrame frame;
-	private JTextField textField;
+	public JFrame frame;
+	JComboBox userListCB;
+	private JButton btnGiriYap;
+	private JButton btnYeniKullanc;
+	List<User> userList;
+	public static LoginForm loginForm;
+	public static User selectedUser;
+	public static SelectForm selectForm;
 
 	/**
 	 * Launch the application.
 	 */
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					LoginForm window = new LoginForm();
+					loginForm=window;
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-	}*/
+	}
 
 	/**
 	 * Create the application.
@@ -43,39 +65,99 @@ public class LoginForm {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 405, 103);
+		frame.addWindowListener(new WindowAdapter() {
+		 
+			@Override
+			public void windowActivated(WindowEvent e) {
+				UserDao userService=new UserImp();
+				userList=userService.all();
+
+		        Vector model = new Vector();
+		        userListCB.removeAllItems();
+		        userListCB.addItem("Seçiniz");
+				 for (User user : userList) {
+					
+					 userListCB.addItem(user);
+					 
+				}
+				
+			}
+		});
+		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{96, 209, 0, 0};
-		gridBagLayout.rowHeights = new int[]{40, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{60, 113, 96, 0, 0};
+		gridBagLayout.rowHeights = new int[]{90, 24, 25, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
-		
-		JLabel lblAdSoyad = new JLabel("Adı Soyadı:");
-		GridBagConstraints gbc_lblAdSoyad = new GridBagConstraints();
-		gbc_lblAdSoyad.anchor = GridBagConstraints.EAST;
-		gbc_lblAdSoyad.insets = new Insets(0, 0, 5, 5);
-		gbc_lblAdSoyad.fill = GridBagConstraints.VERTICAL;
-		gbc_lblAdSoyad.gridx = 0;
-		gbc_lblAdSoyad.gridy = 1;
-		frame.getContentPane().add(lblAdSoyad, gbc_lblAdSoyad);
-		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.gridx = 1;
-		gbc_textField.gridy = 1;
-		frame.getContentPane().add(textField, gbc_textField);
-		textField.setColumns(10);
-		
-		JButton btnGiri = new JButton("GİRİŞ");
-		GridBagConstraints gbc_btnGiri = new GridBagConstraints();
-		gbc_btnGiri.insets = new Insets(0, 0, 5, 0);
-		gbc_btnGiri.gridx = 2;
-		gbc_btnGiri.gridy = 1;
-		frame.getContentPane().add(btnGiri, gbc_btnGiri);
-	}
+		 
+		 JLabel lblKullancSeiniz = new JLabel("Kullanıcı Seçiniz");
+		 GridBagConstraints gbc_lblKullancSeiniz = new GridBagConstraints();
+		 gbc_lblKullancSeiniz.anchor = GridBagConstraints.EAST;
+		 gbc_lblKullancSeiniz.insets = new Insets(0, 0, 5, 5);
+		 gbc_lblKullancSeiniz.gridx = 1;
+		 gbc_lblKullancSeiniz.gridy = 1;
+		 frame.getContentPane().add(lblKullancSeiniz, gbc_lblKullancSeiniz);
+		 
+		  userListCB = new JComboBox();
+		  GridBagConstraints gbc_userListCB = new GridBagConstraints();
+		  gbc_userListCB.gridwidth = 2;
+		  gbc_userListCB.fill = GridBagConstraints.HORIZONTAL;
+		  gbc_userListCB.insets = new Insets(0, 0, 5, 0);
+		  gbc_userListCB.gridx = 2;
+		  gbc_userListCB.gridy = 1;
+		  frame.getContentPane().add(userListCB, gbc_userListCB);
+		 
+		 btnGiriYap = new JButton("Giriş Yap");
+		 btnGiriYap.addActionListener(new ActionListener() {
+		 	public void actionPerformed(ActionEvent e) {
+		 		
+		 		int i=0;
+		 		while(i<userList.size() && !userListCB.getSelectedItem().equals(userList.get(i))){	
+		 			i++;
+		 		}
+		 		
+		 		if(i+1>userList.size()){
+		 			
+					JOptionPane.showMessageDialog(new JFrame(), "Kullanici Bulunamadı");
 
+		 			
+		 		}else {
+			 
+
+			 		selectedUser=userList.get(i);
+		 			System.out.println(selectedUser.toString()+" Kullanıcısı Seçildi.");
+		 			selectForm=new SelectForm();
+		  
+ 		 			selectForm.getFrame().setVisible(true);
+ 		 			frame.dispose();
+		 		}
+		 		 
+		 		
+		 	}
+		 });
+		 GridBagConstraints gbc_btnGiriYap = new GridBagConstraints();
+		 gbc_btnGiriYap.insets = new Insets(0, 0, 0, 5);
+		 gbc_btnGiriYap.anchor = GridBagConstraints.WEST;
+		 gbc_btnGiriYap.gridx = 2;
+		 gbc_btnGiriYap.gridy = 2;
+		 frame.getContentPane().add(btnGiriYap, gbc_btnGiriYap);
+		 
+		 btnYeniKullanc = new JButton("Yeni Kullanıcı");
+		 btnYeniKullanc.addActionListener(new ActionListener() {
+		 	public void actionPerformed(ActionEvent e) {
+		 		
+		 		
+		 		new NewUserForm();
+		 		frame.setVisible(false);
+		 		System.out.println("yeni kullanıcı");
+		 		
+		 	}
+		 });
+		 GridBagConstraints gbc_btnYeniKullanc = new GridBagConstraints();
+		 gbc_btnYeniKullanc.gridx = 3;
+		 gbc_btnYeniKullanc.gridy = 2;
+		 frame.getContentPane().add(btnYeniKullanc, gbc_btnYeniKullanc);
+	}
 }

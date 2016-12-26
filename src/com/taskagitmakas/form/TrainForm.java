@@ -1,5 +1,6 @@
 package com.taskagitmakas.form;
 
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -38,12 +39,15 @@ public class TrainForm {
 		private static BufferedImage imageFromCam;
 		static CamRecorder vcam;
 		private static Mat frameFromCam;
-		static boolean isKeyPress = true;
-		static boolean isCalibrated=false;
+		public int status = 0;
+		public boolean startCamLoop=true;
+		public Thread camThread;
+		
 		/**
 		 * Launch the application.
 		 */
-	/*	public static void main(String[] args) {
+	 
+		/*public static void main(String[] args) {
 	 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -58,13 +62,13 @@ public class TrainForm {
 
 			
 			 
-		}*/
+		} */
 
 		/**
 		 * Create the application.
 		 */
 		public TrainForm() {
-
+			vcam = new CamRecorder();
 			initialize();
 
 		}
@@ -78,13 +82,10 @@ public class TrainForm {
 				@Override
 				public void windowOpened(WindowEvent arg0) {
 				 
-					 new Thread(new Runnable() {
-					      public void run() {
-					
-					
-							vcam = new CamRecorder();
-							while(true){
-								while (isKeyPress) {
+					  camThread=new Thread(new Runnable() {
+					      public void run() {				
+							while(startCamLoop){
+								while (status==0) {
 									frameFromCam= vcam.startRecord();
 									 imageFromCam=toBufferedImage(frameFromCam);
 									
@@ -93,11 +94,14 @@ public class TrainForm {
 										imageLabel.setIcon(image);
 										imageLabel.updateUI();
 									}
-					
+									 
+									
+										System.out.println("calibrasyon");
+									
 								}
 								 
 					
-								while (!isKeyPress) {
+								while (status==1) {
 									frameFromCam= vcam.train();
 									 imageFromCam=toBufferedImage(frameFromCam);
 									if (imageFromCam != null) {
@@ -107,20 +111,54 @@ public class TrainForm {
 									}
 					
 								}
-							
+								System.out.println("filter");
+
+								 
 							}
-							
-					 
+							System.out.println("loop");
+
+						 
 					      }
-					    }).start();
+					    });
+						System.out.println("cıktı");
+
+					 camThread.start();
+					
 				
+					
+				}
+				@Override
+				public void windowDeactivated(WindowEvent e) {
+					
+					vcam.closeCam();
+				}
+				@Override
+				public void windowClosing(WindowEvent e) {
+					
+					System.out.println("Kapatılıyor");
+					status=2;
+					startCamLoop=false;
+					vcam.closeCam();
+					camThread.interrupt();
+				}
+				@Override
+				public void windowClosed(WindowEvent e) {
+					
+					System.out.println("Kapatılıyor");
+					status=2;
+					startCamLoop=false;
+					vcam.closeCam();
+
+					 camThread.stop();
+					
+					
 					
 				}
 			});
 		 
 
 			frame.setBounds(100, 100, 900, 650);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.getContentPane().setLayout(null);
 
 			JPanel panel = new JPanel();
@@ -186,7 +224,7 @@ public class TrainForm {
 				public void actionPerformed(ActionEvent e) {
 					
 					
-					isKeyPress = true;
+					status = 0;
 				}
 			});
 			
@@ -234,7 +272,7 @@ public class TrainForm {
 			doCalibrationButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
-					isKeyPress = false;
+					status = 1;
 					saveButton.setVisible(true);
 					startCalibrationButton.setVisible(true);
 				}
@@ -246,6 +284,30 @@ public class TrainForm {
 			gbc_doCalibrationButton.gridx = 1;
 			gbc_doCalibrationButton.gridy = 8;
 			panel_1.add(doCalibrationButton, gbc_doCalibrationButton);
+			
+			JButton btnNewButton = new JButton("New button");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				
+					
+					System.out.println("Kapatılıyor");
+					status=2;
+					startCamLoop=false;
+					vcam.closeCam();
+
+					 camThread.interrupt();
+					
+					
+				
+				}
+				
+				
+			});
+			GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+			gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
+			gbc_btnNewButton.gridx = 1;
+			gbc_btnNewButton.gridy = 10;
+			panel_1.add(btnNewButton, gbc_btnNewButton);
 			
 			
 			
@@ -292,5 +354,4 @@ public class TrainForm {
 			return image;
 
 		}
-
 }

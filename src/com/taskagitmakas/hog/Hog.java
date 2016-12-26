@@ -18,6 +18,7 @@ import org.opencv.objdetect.HOGDescriptor;
 import com.taskagitmakas.dao.ImageDao;
 import com.taskagitmakas.dao.ImageImp;
 import com.taskagitmakas.entity.Image;
+import com.taskagitmakas.form.LoginForm;
 
 public class Hog {
 
@@ -107,7 +108,7 @@ public class Hog {
 		Date date = new Date();
 		//dateFormat.format(date)
 			
-		Highgui.imwrite("train/"+dateFormat.format(date)+"_"+classType+".jpg",img);
+		Highgui.imwrite("train/"+dateFormat.format(date)+"_"+LoginForm.selectedUser.getId()+"_"+classType+".jpg",img);
 		Imgproc.resize(img, img, new Size(64, 48));
 		Imgproc.cvtColor(img, img, Imgproc.COLOR_RGB2GRAY);
 		MatOfFloat descriptor = new MatOfFloat();
@@ -126,6 +127,7 @@ public class Hog {
 		image.setColCount(descriptor.cols());
 		image.setHogDescriptionVector(myDescription);
 		image.setClassType(classType);
+		image.setUserId(LoginForm.selectedUser.getId());
 		 imageService.insert(image);
 	}
 	

@@ -548,7 +548,7 @@ private int speedFingers = 0;
 	    }
 
 	    protected Mat downSample(Mat ycc, int n){
-	        // TODO: erode then dilate
+	     
 
 	        for (int i=0; i<n; i++)
 	            Imgproc.pyrDown(ycc, ycc);

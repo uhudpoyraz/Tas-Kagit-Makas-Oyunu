@@ -177,7 +177,7 @@ public class KNN {
 
 		 public void testFromDB(Image image){
  
-				int k = 11;// # of neighbours  
+				int k = 1;// # of neighbours  
 				 
 				List<ImageSamples> imagesSampleList = new ArrayList<ImageSamples>();
 				List<Result> resultList = new ArrayList<Result>();				
@@ -223,7 +223,7 @@ public class KNN {
 		 
 		 public void testFromDescription(double[] descriptionFromUser){
 			 
-				int k = 11;// # of neighbours  
+				int k = 1;// # of neighbours  
 				 
 				List<ImageSamples> imagesSampleList = new ArrayList<ImageSamples>();
 				List<Result> resultList = new ArrayList<Result>();				

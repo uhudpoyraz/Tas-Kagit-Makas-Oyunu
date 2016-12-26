@@ -53,6 +53,14 @@ public class Image {
 		this.classType = classType;
 	}
 
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
@@ -69,5 +77,8 @@ public class Image {
 	
 	@Column(name="`classType`")
 	private int classType;
+	
+	@Column(name="`userId`")
+	private int userId;
  
 }

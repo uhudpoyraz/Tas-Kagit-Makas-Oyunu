@@ -149,7 +149,7 @@ public class CamRecorder {
 
 		Mat touchedRegionHsv = new Mat();
 		Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL, 3);
-		im.showImage(touchedRegionHsv);
+		//im.showImage(touchedRegionHsv);
 
 		mBlobColorHsv = Core.sumElems(touchedRegionHsv);
 		int pointCount = touchedRect.width * touchedRect.height;
