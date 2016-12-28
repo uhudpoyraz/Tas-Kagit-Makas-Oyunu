@@ -145,7 +145,7 @@ public class LoginForm {
 		 		
 		 		
 		 		new NewUserForm();
-		 		frame.setVisible(false);
+		 		frame.dispose();
 		 		System.out.println("yeni kullanıcı");
 		 		
 		 	}

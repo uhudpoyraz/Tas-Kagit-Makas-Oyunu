@@ -107,6 +107,7 @@ public class Hog {
 		MatOfPoint location = new MatOfPoint();
 		HOGDescriptor hogDescriptor = new HOGDescriptor(new Size(64, 48), blockSize, blockStride, cellSize, bin);
 		hogDescriptor.compute(img, descriptor, winStride, padding, location);
+		
 		String myDescription = "";
 			for (int j = 0; j < descriptor.rows(); j++) {
 	

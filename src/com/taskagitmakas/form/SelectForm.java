@@ -1,5 +1,4 @@
 package com.taskagitmakas.form;
-import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
@@ -18,7 +17,7 @@ public class SelectForm {
 
 	private JFrame frame;
 	private JLabel lblUsername ;
-	
+	public static TrainForm trainForm;
 	/**
 	 * Create the application.
 	 */
@@ -40,6 +39,11 @@ public class SelectForm {
 				lblUsername.setText(LoginForm.selectedUser.toString());
 				System.out.println(LoginForm.selectedUser.toString()+" in selectForm");
 			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+				
+				LoginForm.loginForm.frame.setVisible(true);
+			}
 		});
 		frame.setBounds(100, 100, 399, 245);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -49,6 +53,7 @@ public class SelectForm {
 			public void actionPerformed(ActionEvent e) {
 				
 				new GameForm();
+				frame.setVisible(false);
 				
 				
 			}
@@ -57,13 +62,9 @@ public class SelectForm {
 		JButton btnTrain = new JButton("EĞİTİM");
 		btnTrain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				 
 				
-				String[] a={"a"};
-				System.out.println("acildi");
-			 
-				new TrainForm();
-				//frame.dispose();
+				trainForm=new TrainForm();
+				frame.setVisible(false);
 			}
 });
 		

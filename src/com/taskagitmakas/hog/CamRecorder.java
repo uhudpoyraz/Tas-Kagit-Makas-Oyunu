@@ -21,8 +21,6 @@ import org.opencv.core.Size;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 
-import com.taskagitmakas.form.Imshow;
-
 public class CamRecorder {
 
 	private VideoCapture videoCapture;
@@ -110,7 +108,7 @@ public class CamRecorder {
 
 		for (int i = 0; i < SAMPLE_NUM; i++) {
 
-			Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 1);
+			Core.rectangle(m, samplePoints[i][0], samplePoints[i][1], new Scalar(47, 255, 6), 2);
 		}
 
 		Rect touchedRect = new Rect();

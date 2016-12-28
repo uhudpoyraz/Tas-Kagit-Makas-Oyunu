@@ -121,20 +121,8 @@ public class TrainForm {
 				
 					
 				}
-				@Override
-				public void windowDeactivated(WindowEvent e) {
-					
-					vcam.closeCam();
-				}
-				@Override
-				public void windowClosing(WindowEvent e) {
-					
-					System.out.println("Kapatılıyor");
-					status=2;
-					startCamLoop=false;
-					vcam.closeCam();
-					camThread.interrupt();
-				}
+			 
+ 			 
 				@Override
 				public void windowClosed(WindowEvent e) {
 					
@@ -142,8 +130,8 @@ public class TrainForm {
 					status=2;
 					startCamLoop=false;
 					vcam.closeCam();
-
-					 camThread.stop();
+					LoginForm.selectForm.getFrame().setVisible(true);
+					 
 					
 					
 					

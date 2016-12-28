@@ -70,4 +70,54 @@ public class ImageImp implements ImageDao{
  
 	}
 	
+	@Override
+	public List<Image> getAllByUser(int userId) {
+		List<Image> list=new ArrayList<Image>();
+		session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		TypedQuery<Image> query = session.createQuery("from Image where userId="+userId, Image.class);
+		list=query.getResultList();
+ 		session.getTransaction().commit(); 
+		return list;
+	}
+	
+	public List<Image> getAllByOtherUsers(int userId) {
+		List<Image> list=new ArrayList<Image>();
+		session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		TypedQuery<Image> query = session.createQuery("from Image where userId!="+userId, Image.class);
+		list=query.getResultList();
+ 		session.getTransaction().commit(); 
+		return list;
+	}
+
+	@Override
+	public Long getCount() {
+		Session session=sessionFactory.getCurrentSession();
+
+		session.beginTransaction();
+
+		Long rowCount = session.createQuery(
+			    "select count(i.id ) " +
+			    "from Image i ", Long.class )
+			.getSingleResult();	
+		session.getTransaction().commit(); 
+
+		return rowCount;
+	}
+
+	@Override
+	public Long getCountByUser(int userId) {
+		Session session=sessionFactory.getCurrentSession();
+		session.beginTransaction();
+
+		Long rowCount = session.createQuery(
+			    "select count(i.id ) " +
+			    "from Image i where i.userId="+userId, Long.class )
+			.getSingleResult();	
+		session.getTransaction().commit(); 
+		return rowCount;
+	 
+	}
+
 }
