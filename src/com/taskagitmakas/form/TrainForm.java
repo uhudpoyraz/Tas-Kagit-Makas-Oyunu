@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import org.opencv.core.Mat;
 
+import com.taskagitmakas.dao.ImageDao;
+import com.taskagitmakas.dao.ImageImp;
 import com.taskagitmakas.hog.CamRecorder;
 import com.taskagitmakas.hog.Hog;
 import javax.swing.JRadioButton;
@@ -36,6 +38,10 @@ public class TrainForm {
 		public int status = 0;
 		public boolean startCamLoop=true;
 		public Thread camThread;
+		public JLabel lblTascount;		
+		public JLabel lblKagitcount;
+		public JLabel lblMakascount;
+		public ImageDao imageService; 
 		
 		/**
 		 * Launch the application.
@@ -76,6 +82,10 @@ public class TrainForm {
 				@Override
 				public void windowOpened(WindowEvent arg0) {
 				 
+					imageService=new ImageImp();
+					getSampleCountByClassType();
+
+					
 					  camThread=new Thread(new Runnable() {
 					      public void run() {				
 							while(startCamLoop){
@@ -154,36 +164,19 @@ public class TrainForm {
 			panel_1.setBounds(690, 0, 196, 591);
 			panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 			frame.getContentPane().add(panel_1);
-			GridBagLayout gbl_panel_1 = new GridBagLayout();
-			gbl_panel_1.columnWidths = new int[] { 78, 0, 0, 0 };
-			gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			gbl_panel_1.columnWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
-			gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
-			panel_1.setLayout(gbl_panel_1);
+			panel_1.setLayout(null);
 			
 			JRadioButton classTypeRadioTas = new JRadioButton("Taş");
-			GridBagConstraints gbc_classTypeRadioTas = new GridBagConstraints();
-			gbc_classTypeRadioTas.anchor = GridBagConstraints.WEST;
-			gbc_classTypeRadioTas.insets = new Insets(0, 0, 5, 5);
-			gbc_classTypeRadioTas.gridx = 1;
-			gbc_classTypeRadioTas.gridy = 2;
-			panel_1.add(classTypeRadioTas, gbc_classTypeRadioTas);
+			classTypeRadioTas.setBounds(38, 62, 50, 23);
+			panel_1.add(classTypeRadioTas);
 			
 			JRadioButton classTypeRadioKagit = new JRadioButton("Kagit");
-			GridBagConstraints gbc_classTypeRadioKagit = new GridBagConstraints();
-			gbc_classTypeRadioKagit.anchor = GridBagConstraints.WEST;
-			gbc_classTypeRadioKagit.insets = new Insets(0, 0, 5, 5);
-			gbc_classTypeRadioKagit.gridx = 1;
-			gbc_classTypeRadioKagit.gridy = 3;
-			panel_1.add(classTypeRadioKagit, gbc_classTypeRadioKagit);
+			classTypeRadioKagit.setBounds(38, 90, 62, 23);
+			panel_1.add(classTypeRadioKagit);
 			
 			JRadioButton classTypeRadioMakas = new JRadioButton("Makas");
-			GridBagConstraints gbc_classTypeRadioMakas = new GridBagConstraints();
-			gbc_classTypeRadioMakas.anchor = GridBagConstraints.WEST;
-			gbc_classTypeRadioMakas.insets = new Insets(0, 0, 5, 5);
-			gbc_classTypeRadioMakas.gridx = 1;
-			gbc_classTypeRadioMakas.gridy = 4;
-			panel_1.add(classTypeRadioMakas, gbc_classTypeRadioMakas);
+			classTypeRadioMakas.setBounds(38, 118, 71, 23);
+			panel_1.add(classTypeRadioMakas);
 
 			JMenuBar menuBar = new JMenuBar();
 			frame.setJMenuBar(menuBar);
@@ -202,6 +195,7 @@ public class TrainForm {
 			radioButtonGroup.add(classTypeRadioMakas);
 			
 			JButton startCalibrationButton = new JButton("Kalibrasyon Sıfırla");
+			startCalibrationButton.setBounds(38, 206, 146, 25);
 			startCalibrationButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
@@ -211,6 +205,7 @@ public class TrainForm {
 			});
 			
 			JButton saveButton = new JButton("Kayit Et");
+			saveButton.setBounds(38, 149, 146, 25);
 			saveButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
@@ -233,24 +228,16 @@ public class TrainForm {
 							
  					hog.addFromMat(vcam.saveImage(), classType);
 	
-					
+ 					getSampleCountByClassType();
 					
 				}
 			});
 			saveButton.setVisible(false);
-			GridBagConstraints gbc_saveButton = new GridBagConstraints();
-			gbc_saveButton.fill = GridBagConstraints.HORIZONTAL;
-			gbc_saveButton.insets = new Insets(0, 0, 5, 5);
-			gbc_saveButton.gridx = 1;
-			gbc_saveButton.gridy = 5;
-			panel_1.add(saveButton, gbc_saveButton);
-			GridBagConstraints gbc_startCalibrationButton = new GridBagConstraints();
-			gbc_startCalibrationButton.insets = new Insets(0, 0, 5, 5);
-			gbc_startCalibrationButton.gridx = 1;
-			gbc_startCalibrationButton.gridy = 7;
-			panel_1.add(startCalibrationButton, gbc_startCalibrationButton);
+			panel_1.add(saveButton);
+			panel_1.add(startCalibrationButton);
 			
 			JButton doCalibrationButton = new JButton("Kalibre Et");
+			doCalibrationButton.setBounds(38, 236, 146, 25);
 			doCalibrationButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
@@ -259,37 +246,35 @@ public class TrainForm {
 					startCalibrationButton.setVisible(true);
 				}
 			});
+			panel_1.add(doCalibrationButton);
 			
-			GridBagConstraints gbc_doCalibrationButton = new GridBagConstraints();
-			gbc_doCalibrationButton.fill = GridBagConstraints.HORIZONTAL;
-			gbc_doCalibrationButton.insets = new Insets(0, 0, 5, 5);
-			gbc_doCalibrationButton.gridx = 1;
-			gbc_doCalibrationButton.gridy = 8;
-			panel_1.add(doCalibrationButton, gbc_doCalibrationButton);
+			JLabel lblDatabaseBilgisi = new JLabel("Database Bilgisi");
+			lblDatabaseBilgisi.setBounds(12, 302, 172, 15);
+			panel_1.add(lblDatabaseBilgisi);
 			
-			JButton btnNewButton = new JButton("New button");
-			btnNewButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				
-					
-					System.out.println("Kapatılıyor");
-					status=2;
-					startCamLoop=false;
-					vcam.closeCam();
-
-					 camThread.interrupt();
-					
-					
-				
-				}
-				
-				
-			});
-			GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-			gbc_btnNewButton.insets = new Insets(0, 0, 0, 5);
-			gbc_btnNewButton.gridx = 1;
-			gbc_btnNewButton.gridy = 10;
-			panel_1.add(btnNewButton, gbc_btnNewButton);
+			JLabel lblTa = new JLabel("Taş:");
+			lblTa.setBounds(12, 330, 70, 15);
+			panel_1.add(lblTa);
+			
+			lblTascount = new JLabel("tasCount");
+			lblTascount.setBounds(71, 330, 70, 15);
+			panel_1.add(lblTascount);
+			
+			JLabel lblKagit = new JLabel("Kagit:");
+			lblKagit.setBounds(12, 357, 70, 15);
+			panel_1.add(lblKagit);
+			
+			lblKagitcount = new JLabel("kagitCount");
+			lblKagitcount.setBounds(71, 357, 70, 15);
+			panel_1.add(lblKagitcount);
+			
+			JLabel lblMakas = new JLabel("Makas:");
+			lblMakas.setBounds(12, 384, 70, 15);
+			panel_1.add(lblMakas);
+			
+			lblMakascount = new JLabel("makasCount");
+			lblMakascount.setBounds(71, 384, 71, 15);
+			panel_1.add(lblMakascount);
 			
 			
 			
@@ -335,5 +320,12 @@ public class TrainForm {
 
 			return image;
 
+		}
+		public void getSampleCountByClassType(){
+			lblTascount.setText(imageService.getCountByClassType(1).toString());
+			lblKagitcount.setText(imageService.getCountByClassType(2).toString());
+			lblMakascount.setText(imageService.getCountByClassType(3).toString());
+			
+			
 		}
 }

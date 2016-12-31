@@ -10,7 +10,8 @@ public interface ImageDao {
 	public void insert(Image image);
 	public Image get(int id);
 	public List<Image> all();
-	public List<Image> getSampleByCount(int classType,int count);
+	public List<Image> getSampleByCount(int classType);
+	public Long getCountByClassType(int imageClass);
 	public List<Image> getAllByUser(int id);
 	public List<Image> getAllByOtherUsers(int id);
 	public Long getCount();

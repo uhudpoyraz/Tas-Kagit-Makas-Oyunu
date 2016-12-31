@@ -278,9 +278,8 @@ public class GameForm {
 						Random rand = new Random();
 						int  computerClass = ((rand.nextInt(53) + 1)%3)+1;
 						int userClass=1;
-					 	//userClass=Integer.parseInt(knn.testFromDescription(hog.getDescriptionFromMat(vcam.saveImage())).replace(" ",""));
+					 	userClass=Integer.parseInt(knn.testFromDescription(hog.getDescriptionFromMat(vcam.saveImage())).replace(" ",""));
 		 				
-						userClass=1;
 						Mat shape=new Mat();
 						shape=Highgui.imread("assets/"+computerClass+".png");
 						System.out.println("assets/"+computerClass+".png"+" "+shape.size());

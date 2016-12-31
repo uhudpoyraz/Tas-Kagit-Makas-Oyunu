@@ -57,13 +57,13 @@ public class ImageImp implements ImageDao{
 
 	
 	@Override
-	public List<Image> getSampleByCount(int classType,int count) {
+	public List<Image> getSampleByCount(int classType) {
 		List<Image> list=new ArrayList<Image>();
 		session = sessionFactory.getCurrentSession();
 		session.beginTransaction();
 
 		TypedQuery<Image> query = session.createQuery("from Image where classType="+classType, Image.class);
-		list=query.setMaxResults(count).getResultList();
+		list=query.getResultList();
  		session.getTransaction().commit(); 
 
 		return list;
@@ -114,6 +114,18 @@ public class ImageImp implements ImageDao{
 		Long rowCount = session.createQuery(
 			    "select count(i.id ) " +
 			    "from Image i where i.userId="+userId, Long.class )
+			.getSingleResult();	
+		session.getTransaction().commit(); 
+		return rowCount;
+	 
+	}
+	public Long getCountByClassType(int classType) {
+		Session session=sessionFactory.getCurrentSession();
+		session.beginTransaction();
+
+		Long rowCount = session.createQuery(
+			    "select count(i.id ) " +
+			    "from Image i where i.classType="+classType, Long.class )
 			.getSingleResult();	
 		session.getTransaction().commit(); 
 		return rowCount;
