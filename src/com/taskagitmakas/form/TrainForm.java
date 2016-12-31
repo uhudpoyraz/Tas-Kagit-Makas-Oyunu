@@ -24,6 +24,7 @@ import com.taskagitmakas.hog.Hog;
 import javax.swing.JRadioButton;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JCheckBox;
 public class TrainForm {
  
 
@@ -42,7 +43,7 @@ public class TrainForm {
 		public JLabel lblKagitcount;
 		public JLabel lblMakascount;
 		public ImageDao imageService; 
-		
+		JCheckBox chckbxisTest;
 		/**
 		 * Launch the application.
 		 */
@@ -167,15 +168,15 @@ public class TrainForm {
 			panel_1.setLayout(null);
 			
 			JRadioButton classTypeRadioTas = new JRadioButton("Taş");
-			classTypeRadioTas.setBounds(38, 62, 50, 23);
+			classTypeRadioTas.setBounds(59, 23, 50, 23);
 			panel_1.add(classTypeRadioTas);
 			
 			JRadioButton classTypeRadioKagit = new JRadioButton("Kagit");
-			classTypeRadioKagit.setBounds(38, 90, 62, 23);
+			classTypeRadioKagit.setBounds(59, 51, 62, 23);
 			panel_1.add(classTypeRadioKagit);
 			
 			JRadioButton classTypeRadioMakas = new JRadioButton("Makas");
-			classTypeRadioMakas.setBounds(38, 118, 71, 23);
+			classTypeRadioMakas.setBounds(59, 79, 71, 23);
 			panel_1.add(classTypeRadioMakas);
 
 			JMenuBar menuBar = new JMenuBar();
@@ -195,7 +196,7 @@ public class TrainForm {
 			radioButtonGroup.add(classTypeRadioMakas);
 			
 			JButton startCalibrationButton = new JButton("Kalibrasyon Sıfırla");
-			startCalibrationButton.setBounds(38, 206, 146, 25);
+			startCalibrationButton.setBounds(12, 185, 172, 25);
 			startCalibrationButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
@@ -205,7 +206,7 @@ public class TrainForm {
 			});
 			
 			JButton saveButton = new JButton("Kayit Et");
-			saveButton.setBounds(38, 149, 146, 25);
+			saveButton.setBounds(12, 222, 172, 25);
 			saveButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
@@ -225,9 +226,13 @@ public class TrainForm {
 						classType=3;
 					}
 					
+					boolean isTest=false;
+					if(chckbxisTest.isSelected()){
+						
+						isTest=true;
+					}
 							
- 					hog.addFromMat(vcam.saveImage(), classType);
-	
+ 					hog.addFromMat(vcam.saveImage(), classType,isTest);
  					getSampleCountByClassType();
 					
 				}
@@ -236,9 +241,9 @@ public class TrainForm {
 			panel_1.add(saveButton);
 			panel_1.add(startCalibrationButton);
 			
-			JButton doCalibrationButton = new JButton("Kalibre Et");
-			doCalibrationButton.setBounds(38, 236, 146, 25);
-			doCalibrationButton.addActionListener(new ActionListener() {
+			JButton isTestData = new JButton("Kalibre Et");
+			isTestData.setBounds(12, 148, 172, 25);
+			isTestData.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					
 					status = 1;
@@ -246,7 +251,7 @@ public class TrainForm {
 					startCalibrationButton.setVisible(true);
 				}
 			});
-			panel_1.add(doCalibrationButton);
+			panel_1.add(isTestData);
 			
 			JLabel lblDatabaseBilgisi = new JLabel("Database Bilgisi");
 			lblDatabaseBilgisi.setBounds(12, 302, 172, 15);
@@ -275,6 +280,10 @@ public class TrainForm {
 			lblMakascount = new JLabel("makasCount");
 			lblMakascount.setBounds(71, 384, 71, 15);
 			panel_1.add(lblMakascount);
+			
+			chckbxisTest = new JCheckBox("Test olarak işaretle");
+			chckbxisTest.setBounds(8, 117, 167, 23);
+			panel_1.add(chckbxisTest);
 			
 			
 			

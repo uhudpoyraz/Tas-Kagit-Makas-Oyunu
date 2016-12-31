@@ -60,6 +60,14 @@ public class Image {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
+ 
+	public boolean isTest() {
+		return isTest;
+	}
+
+	public void setTest(boolean isTest) {
+		this.isTest = isTest;
+	}
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -80,5 +88,8 @@ public class Image {
 	
 	@Column(name="`userId`")
 	private int userId;
+	
+	@Column(name="`isTest`")
+	private boolean isTest;
  
 }

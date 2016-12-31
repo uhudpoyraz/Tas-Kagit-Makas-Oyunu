@@ -96,7 +96,7 @@ public class Hog {
 		imageService.insert(image);
 	}
 
-	public void addFromMat(Mat img, int classType) {
+	public void addFromMat(Mat img, int classType,boolean isTest) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS");
 		Date date = new Date();
@@ -119,7 +119,9 @@ public class Hog {
 		image.setHogDescriptionVector(myDescription);
 		image.setClassType(classType);
 		image.setUserId(LoginForm.selectedUser.getId());
-		 imageService.insert(image);
+		image.setTest(isTest);
+		System.out.println("ClassType: "+classType+" ,isTest: "+isTest);
+		imageService.insert(image);
 	}
 	
 	public double[] getDescriptionFromMat(Mat img) {
