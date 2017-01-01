@@ -49,7 +49,7 @@ public class ColorBlobDetector {
 
     public void setHsvColor(Scalar hsvColor) {
        
-    	 
+/*	    	 
     mLowerBound.val[0] = (hsvColor.val[0] > 10) ? hsvColor.val[0] - 10 : 0;
 		mUpperBound.val[0] = (hsvColor.val[0] < 245) ? hsvColor.val[0] + 10 : 255;
 
@@ -61,8 +61,8 @@ public class ColorBlobDetector {
 
 		mLowerBound.val[3] = 0;
 		mUpperBound.val[3] = 255;
- 
-    /*		
+ */
+    	
     	double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0]-mColorRadius.val[0] : 0;
         double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0]+mColorRadius.val[0] : 255;
 
@@ -85,7 +85,7 @@ public class ColorBlobDetector {
             spectrumHsv.put(0, j, tmp);
         }
 
-        Imgproc.cvtColor(spectrumHsv, mSpectrum, Imgproc.COLOR_HSV2RGB_FULL, 3);*/
+        Imgproc.cvtColor(spectrumHsv, mSpectrum, Imgproc.COLOR_HSV2RGB_FULL, 3); 
     }
 
     public Mat getSpectrum() {
@@ -116,10 +116,17 @@ public class ColorBlobDetector {
         Imgproc.erode(mMask, mDilatedMask, kernel2);
         Imgproc.dilate(mDilatedMask, mDilatedMask,kernel);
         */
-        Imgproc.dilate(mMask, mDilatedMask, new Mat());
+
+        Mat kernel=Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,new Size(17,17),new Point(8,8));
+        Imgproc.erode(mMask, mDilatedMask, new Mat());
+        Imgproc.dilate(mDilatedMask, mDilatedMask,kernel);
         showImageAftermorphologyOperation.showImage(mDilatedMask);
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-
+  
+        
+        
+        
+ 
         Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Find max contour area

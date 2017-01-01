@@ -25,7 +25,7 @@ public class TestHog {
 
 	
 	public static ImageDao imageService=new ImageImp();
-	public static List<Image> myTrainSet;
+	public static List<Image> myTrainSet,myTestSet;
 
 	
 	public static BufferedReader readDataFile(String filename) {
@@ -42,23 +42,46 @@ public class TestHog {
  
 	public static void createWekaFile(){
 		myTrainSet = new ArrayList<Image>();
-		myTrainSet = imageService.all();	
+		myTestSet = new ArrayList<Image>();
+		myTrainSet = imageService.all(false);
+		myTestSet = imageService.all(true);
+		
 		try{
-		    PrintWriter writer = new PrintWriter("myDataSet.arff", "UTF-8");
-		    writer.println("@relation handDescription");
-		    writer.println("@attribute class {1, 2, 3}");
+		    PrintWriter myTrainWriter = new PrintWriter("myTrain.arff", "UTF-8");
+		    myTrainWriter.println("@relation handDescriptionTrain");
+		    myTrainWriter.println("@attribute class {1, 2, 3}");
 		    for(int i=0;i<myTrainSet.get(0).getRowCount();i++){
-			    writer.println("@attribute feature"+i+" numeric");
+		    	myTrainWriter.println("@attribute feature"+i+" numeric");
  	
 		    }
 		    
-		    writer.println("@data");
+		    myTrainWriter.println("@data");
 		   
 		    for (Image image : myTrainSet) {
-			    writer.println(image.getClassType()+","+image.getHogDescriptionVector().substring(0,image.getHogDescriptionVector().length()-1));
+		    	myTrainWriter.println(image.getClassType()+","+image.getHogDescriptionVector().substring(0,image.getHogDescriptionVector().length()-1));
  
 			} 
-		    writer.close();
+		    myTrainWriter.close();
+		    
+		    
+		    PrintWriter myTestWriter = new PrintWriter("myTest.arff", "UTF-8");
+		    myTestWriter.println("@relation handDescriptionTest");
+		    myTestWriter.println("@attribute class {1, 2, 3}");
+		    for(int i=0;i<myTestSet.get(0).getRowCount();i++){
+		    	myTestWriter.println("@attribute feature"+i+" numeric");
+ 	
+		    }
+		    
+		    myTestWriter.println("@data");
+		   
+		    for (Image image : myTestSet) {
+		    	myTestWriter.println(image.getClassType()+","+image.getHogDescriptionVector().substring(0,image.getHogDescriptionVector().length()-1));
+ 
+			} 
+		    myTestWriter.close();
+		    
+		    
+		    
 		} catch (IOException e) {
 		   // do something
 		}		
@@ -68,24 +91,27 @@ public class TestHog {
 	public static void main(String[] args) throws Exception {
 		
 		createWekaFile();
-		BufferedReader datafile = readDataFile("myDataSet.arff");
- 		Instances data = new Instances(datafile);
-		data.setClassIndex(0);
-  
-		int testDataSize=3*20*1;
-		int trainingDataSize=data.size()-testDataSize;
-		
-		
- 		Instances trainingData = new Instances(data,0,trainingDataSize);
- 		Instances testData = new Instances(data,trainingDataSize,testDataSize);
+		BufferedReader trainDatafile = readDataFile("myTrain.arff");
+		BufferedReader testDatafile = readDataFile("myTest.arff");
+
+ 		Instances trainData = new Instances(trainDatafile);
+ 		trainData.setClassIndex(0);
  		
-		System.out.println("Trainin Data Size:"+trainingData.size());
+ 		
+ 		
+ 		
+ 		
+ 		
+ 		Instances testData = new Instances(testDatafile);
+ 		testData.setClassIndex(0);
+		 
+		System.out.println("Trainin Data Size:"+trainData.size());
 		System.out.println("Test Data Size:"+testData.size());
 
  		
  		IBk ibk=new IBk();
- 		ibk.buildClassifier(data);
-		Evaluation evaluation=new Evaluation(data);
+ 		ibk.buildClassifier(trainData);
+		Evaluation evaluation=new Evaluation(trainData);
 		evaluation.evaluateModel(ibk, testData);
 		
 		System.out.println(evaluation.toSummaryString("------------Result-------------",true));

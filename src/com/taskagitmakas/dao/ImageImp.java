@@ -54,6 +54,19 @@ public class ImageImp implements ImageDao{
 		return list;
  
 	}
+	@Override
+	public List<Image> all(boolean isTest) {
+		
+		List<Image> list=new ArrayList<Image>();
+		session = sessionFactory.getCurrentSession();
+		session.beginTransaction();
+		TypedQuery<Image> query = session.createQuery("from Image where isTest="+isTest, Image.class);
+		list=query.getResultList();
+ 		session.getTransaction().commit(); 
+
+		return list;
+ 
+	}
 
 	
 	@Override

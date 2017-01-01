@@ -170,13 +170,13 @@ public class CamRecorder {
 
 		boundRect = Imgproc.boundingRect(new MatOfPoint(contours.get(boundPos).toArray()));
 		
-		Point tL=new Point(boundRect.tl().x-20,boundRect.tl().y-20);
+		/*Point tL=new Point(boundRect.tl().x-20,boundRect.tl().y-20);
 		Point bR=new Point(boundRect.br().x+20,boundRect.br().y+20);
 
 		HandFrame=new Rect(tL, bR);
 		boundRect=HandFrame;
-		Core.rectangle(m, HandFrame.tl(), HandFrame.br(), new Scalar(255, 255, 255), 2, 8, 0);
-		//Core.rectangle(m,boundRect.tl(), boundRect.br(), new Scalar(255, 255, 255), 2, 8, 0);
+		Core.rectangle(m, HandFrame.tl(), HandFrame.br(), new Scalar(255, 255, 255), 2, 8, 0);*/
+		Core.rectangle(m,boundRect.tl(), boundRect.br(), new Scalar(255, 255, 255), 2, 8, 0);
 		
 	  
 		int rectHeightThresh = 0;
@@ -243,7 +243,7 @@ public class CamRecorder {
 
 	public Mat saveImage() {
 		Mat frameFromCam=new Mat();
-		frameFromCam=Image.submat(HandFrame);
+		frameFromCam=Image.submat(boundRect);
 		return frameFromCam;
 	}
 	public Mat getImage(){
