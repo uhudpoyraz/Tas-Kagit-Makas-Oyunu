@@ -25,6 +25,7 @@ public class ColorBlobDetector {
     private Scalar mColorRadius = new Scalar(25,50,50,0); 
     private Mat mSpectrum = new Mat();
     private List<MatOfPoint> mContours = new ArrayList<MatOfPoint>();
+	private Imshow showBinaryImage, showHSVImage, showImageAftermorphologyOperation;
 
     // Cache
     Mat mPyrDownMat = new Mat();
@@ -34,12 +35,35 @@ public class ColorBlobDetector {
     Mat mHierarchy = new Mat();
     Mat mGray = new Mat();
     
+    public ColorBlobDetector(){
+    	
+    	showBinaryImage=new Imshow("Binary Resim");
+    	showHSVImage=new Imshow("HSV Resim");
+    	showImageAftermorphologyOperation=new Imshow("Morphology İşleminden Sonra Resim");
+
+    }
+    
     public void setColorRadius(Scalar radius) {
         mColorRadius = radius;
     }
 
     public void setHsvColor(Scalar hsvColor) {
-       double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0]-mColorRadius.val[0] : 0;
+       
+    	 
+    mLowerBound.val[0] = (hsvColor.val[0] > 10) ? hsvColor.val[0] - 10 : 0;
+		mUpperBound.val[0] = (hsvColor.val[0] < 245) ? hsvColor.val[0] + 10 : 255;
+
+		mLowerBound.val[1] = (hsvColor.val[1] > 130) ? hsvColor.val[1] - 100 : 30;
+		mUpperBound.val[1] = (hsvColor.val[1] < 155) ? hsvColor.val[1] + 100 : 255;
+
+		mLowerBound.val[2] = (hsvColor.val[2] > 130) ? hsvColor.val[2] - 100 : 30;
+		mUpperBound.val[2] = (hsvColor.val[2] < 155) ? hsvColor.val[2] + 100 : 255;
+
+		mLowerBound.val[3] = 0;
+		mUpperBound.val[3] = 255;
+ 
+    /*		
+    	double minH = (hsvColor.val[0] >= mColorRadius.val[0]) ? hsvColor.val[0]-mColorRadius.val[0] : 0;
         double maxH = (hsvColor.val[0]+mColorRadius.val[0] <= 255) ? hsvColor.val[0]+mColorRadius.val[0] : 255;
 
         mLowerBound.val[0] = minH;
@@ -61,7 +85,7 @@ public class ColorBlobDetector {
             spectrumHsv.put(0, j, tmp);
         }
 
-        Imgproc.cvtColor(spectrumHsv, mSpectrum, Imgproc.COLOR_HSV2RGB_FULL, 3);
+        Imgproc.cvtColor(spectrumHsv, mSpectrum, Imgproc.COLOR_HSV2RGB_FULL, 3);*/
     }
 
     public Mat getSpectrum() {
@@ -77,14 +101,23 @@ public class ColorBlobDetector {
         Imgproc.pyrDown(rgbaImage, mPyrDownMat);
         Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
         Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL,3);
+ 
+        showHSVImage.showImage(mHsvMat);
+
         Core.inRange(mHsvMat, mLowerBound, mUpperBound, mMask);
+        showBinaryImage.showImage(mMask);
         mMask.copyTo(mGray);
-        
-        
+        mMask.copyTo(mDilatedMask);
+
+   /*    
         Mat kernel=Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,new Size(17,17),new Point(8,8));
-        Imgproc.erode(mMask, mDilatedMask, new Mat());
+        Mat kernel2=Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE,new Size(5,5),new Point(0,0));
+
+        Imgproc.erode(mMask, mDilatedMask, kernel2);
         Imgproc.dilate(mDilatedMask, mDilatedMask,kernel);
-  
+        */
+        Imgproc.dilate(mMask, mDilatedMask, new Mat());
+        showImageAftermorphologyOperation.showImage(mDilatedMask);
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
         Imgproc.findContours(mDilatedMask, contours, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
