@@ -34,7 +34,7 @@ import java.awt.event.ActionEvent;
 
 public class CalibrationForm {
 
-	public JFrame frame;
+	public JFrame frmEitim;
 	private static ImageIcon image;
 	private static JLabel imageLabel = new JLabel("image");
 	private Boolean SizeCustom;
@@ -53,7 +53,7 @@ public class CalibrationForm {
 			public void run() {
 				try {
 					CalibrationForm window = new CalibrationForm();
-					window.frame.setVisible(true);
+					window.frmEitim.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -102,23 +102,24 @@ public class CalibrationForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frmEitim = new JFrame();
+		frmEitim.setTitle("KALİBRASYON");
 
-		frame.setBounds(100, 100, 900, 650);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmEitim.setBounds(100, 100, 900, 650);
+		frmEitim.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmEitim.getContentPane().setLayout(null);
 
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 678, 591);
 		panel.setToolTipText("");
 		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		panel.setLayout(null);
-		frame.getContentPane().add(panel);
+		frmEitim.getContentPane().add(panel);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(690, 0, 196, 591);
 		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		frame.getContentPane().add(panel_1);
+		frmEitim.getContentPane().add(panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[] { 78, 0, 0 };
 		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -141,7 +142,7 @@ public class CalibrationForm {
 		panel_1.add(btnFiltrele, gbc_btnFiltrele);
 
 		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+		frmEitim.setJMenuBar(menuBar);
 
 		image = new ImageIcon();
 		Height = panel.getHeight();

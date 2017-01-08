@@ -22,7 +22,7 @@ import java.awt.event.ActionEvent;
 
 public class LoginForm {
 
-	public JFrame frame;
+	public JFrame frmKullancGirii;
 	JComboBox userListCB;
 	private JButton btnGiriYap;
 	private JButton btnYeniKullanc;
@@ -40,7 +40,7 @@ public class LoginForm {
 				try {
 					LoginForm window = new LoginForm();
 					loginForm=window;
-					window.frame.setVisible(true);
+					window.frmKullancGirii.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -59,8 +59,9 @@ public class LoginForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.addWindowListener(new WindowAdapter() {
+		frmKullancGirii = new JFrame();
+		frmKullancGirii.setTitle("KULLANICI GİRİŞİ");
+		frmKullancGirii.addWindowListener(new WindowAdapter() {
 		 
 			@Override
 			public void windowActivated(WindowEvent e) {
@@ -78,22 +79,22 @@ public class LoginForm {
 				
 			}
 		});
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmKullancGirii.setBounds(100, 100, 450, 300);
+		frmKullancGirii.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{60, 113, 96, 0, 0};
 		gridBagLayout.rowHeights = new int[]{90, 24, 25, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
-		frame.getContentPane().setLayout(gridBagLayout);
+		frmKullancGirii.getContentPane().setLayout(gridBagLayout);
 		 
-		 JLabel lblKullancSeiniz = new JLabel("Kullanıcı Seçiniz");
+		 JLabel lblKullancSeiniz = new JLabel("Kullanıcı Seçiniz:");
 		 GridBagConstraints gbc_lblKullancSeiniz = new GridBagConstraints();
 		 gbc_lblKullancSeiniz.anchor = GridBagConstraints.EAST;
 		 gbc_lblKullancSeiniz.insets = new Insets(0, 0, 5, 5);
 		 gbc_lblKullancSeiniz.gridx = 1;
 		 gbc_lblKullancSeiniz.gridy = 1;
-		 frame.getContentPane().add(lblKullancSeiniz, gbc_lblKullancSeiniz);
+		 frmKullancGirii.getContentPane().add(lblKullancSeiniz, gbc_lblKullancSeiniz);
 		 
 		  userListCB = new JComboBox();
 		  GridBagConstraints gbc_userListCB = new GridBagConstraints();
@@ -102,7 +103,7 @@ public class LoginForm {
 		  gbc_userListCB.insets = new Insets(0, 0, 5, 0);
 		  gbc_userListCB.gridx = 2;
 		  gbc_userListCB.gridy = 1;
-		  frame.getContentPane().add(userListCB, gbc_userListCB);
+		  frmKullancGirii.getContentPane().add(userListCB, gbc_userListCB);
 		 
 		 btnGiriYap = new JButton("Giriş Yap");
 		 btnGiriYap.addActionListener(new ActionListener() {
@@ -126,7 +127,7 @@ public class LoginForm {
 		 			selectForm=new SelectForm();
 		  
  		 			selectForm.getFrame().setVisible(true);
- 		 			frame.dispose();
+ 		 			frmKullancGirii.dispose();
 		 		}
 		 		 
 		 		
@@ -137,7 +138,7 @@ public class LoginForm {
 		 gbc_btnGiriYap.anchor = GridBagConstraints.WEST;
 		 gbc_btnGiriYap.gridx = 2;
 		 gbc_btnGiriYap.gridy = 2;
-		 frame.getContentPane().add(btnGiriYap, gbc_btnGiriYap);
+		 frmKullancGirii.getContentPane().add(btnGiriYap, gbc_btnGiriYap);
 		 
 		 btnYeniKullanc = new JButton("Yeni Kullanıcı");
 		 btnYeniKullanc.addActionListener(new ActionListener() {
@@ -145,7 +146,7 @@ public class LoginForm {
 		 		
 		 		
 		 		new NewUserForm();
-		 		frame.dispose();
+		 		frmKullancGirii.dispose();
 		 		System.out.println("yeni kullanıcı");
 		 		
 		 	}
@@ -153,6 +154,6 @@ public class LoginForm {
 		 GridBagConstraints gbc_btnYeniKullanc = new GridBagConstraints();
 		 gbc_btnYeniKullanc.gridx = 3;
 		 gbc_btnYeniKullanc.gridy = 2;
-		 frame.getContentPane().add(btnYeniKullanc, gbc_btnYeniKullanc);
+		 frmKullancGirii.getContentPane().add(btnYeniKullanc, gbc_btnYeniKullanc);
 	}
 }

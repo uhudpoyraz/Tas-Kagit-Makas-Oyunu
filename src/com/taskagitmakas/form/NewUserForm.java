@@ -19,7 +19,7 @@ import java.awt.event.WindowEvent;
 
 public class NewUserForm {
 
-	private JFrame frame;
+	private JFrame frmKullancKayt;
 	private JTextField nameTF;
 	private JTextField surnameTF;
 	
@@ -35,21 +35,22 @@ public class NewUserForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.addWindowListener(new WindowAdapter() {
+		frmKullancKayt = new JFrame();
+		frmKullancKayt.setTitle("KULLANICI KAYIT");
+		frmKullancKayt.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				
-				LoginForm.loginForm.frame.setVisible(true);
+				LoginForm.loginForm.frmKullancGirii.setVisible(true);
 			}
 		});
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmKullancKayt.setBounds(100, 100, 450, 300);
+		frmKullancKayt.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmKullancKayt.getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(12, 12, 426, 249);
-		frame.getContentPane().add(panel);
+		frmKullancKayt.getContentPane().add(panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0};
@@ -57,7 +58,7 @@ public class NewUserForm {
 		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel.setLayout(gbl_panel);
 		
-		JLabel lblName = new JLabel("Name");
+		JLabel lblName = new JLabel("Ad:");
 		GridBagConstraints gbc_lblName = new GridBagConstraints();
 		gbc_lblName.insets = new Insets(0, 0, 5, 5);
 		gbc_lblName.gridx = 2;
@@ -74,7 +75,7 @@ public class NewUserForm {
 		panel.add(nameTF, gbc_nameTF);
 		nameTF.setColumns(10);
 		
-		JLabel lblSurname = new JLabel("Surname");
+		JLabel lblSurname = new JLabel("Soyad:");
 		GridBagConstraints gbc_lblSurname = new GridBagConstraints();
 		gbc_lblSurname.insets = new Insets(0, 0, 5, 5);
 		gbc_lblSurname.gridx = 2;
@@ -90,7 +91,7 @@ public class NewUserForm {
 		panel.add(surnameTF, gbc_surnameTF);
 		surnameTF.setColumns(10);
 		
-		JButton btnKayitEt = new JButton("Kayit Et");
+		JButton btnKayitEt = new JButton("Kayıt Et");
 		btnKayitEt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -111,6 +112,6 @@ public class NewUserForm {
 		gbc_btnKayitEt.gridx = 4;
 		gbc_btnKayitEt.gridy = 3;
 		panel.add(btnKayitEt, gbc_btnKayitEt);
-		frame.setVisible(true);
+		frmKullancKayt.setVisible(true);
 	}
 }

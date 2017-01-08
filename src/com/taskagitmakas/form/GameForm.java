@@ -28,10 +28,10 @@ import com.taskagitmakas.hog.KNN;
 public class GameForm {
 
 
-	public JFrame frame;
+	public JFrame frmTaKatMakas;
 	private  ImageIcon image,computerImage,userImage;
 	private  JLabel imageLabel = new JLabel("image");
-	private JLabel computerImageLabel = new JLabel("New label");
+	private JLabel computerImageLabel = new JLabel("");
 	
 	public JLabel lblCurrentGameCount;
 	public JLabel lblUserscore;
@@ -82,8 +82,9 @@ public class GameForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.addWindowListener(new WindowAdapter() {
+		frmTaKatMakas = new JFrame();
+		frmTaKatMakas.setTitle("TAŞ KAĞIT MAKAS OYUNU");
+		frmTaKatMakas.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent arg0) {
 			 
@@ -154,21 +155,21 @@ public class GameForm {
 		});
 	 
 
-		frame.setBounds(100, 100, 1010, 787);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmTaKatMakas.setBounds(100, 100, 1010, 787);
+		frmTaKatMakas.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmTaKatMakas.getContentPane().setLayout(null);
 
 		JPanel userScreen = new JPanel();
 		userScreen.setBounds(12, 48, 640, 480);
 		userScreen.setToolTipText("");
 		userScreen.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		userScreen.setLayout(null);
-		frame.getContentPane().add(userScreen);
+		frmTaKatMakas.getContentPane().add(userScreen);
 
 		JPanel computerScreen = new JPanel();
 		computerScreen.setBounds(664, 48, 330, 480);
 		computerScreen.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		frame.getContentPane().add(computerScreen);
+		frmTaKatMakas.getContentPane().add(computerScreen);
 		computerScreen.setLayout(null);
 		
 		computerImageLabel.setBounds(0, 0, 330, 480);
@@ -193,10 +194,10 @@ public class GameForm {
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(22, 540, 960, 188);
-		frame.getContentPane().add(panel);
+		frmTaKatMakas.getContentPane().add(panel);
 		panel.setLayout(null);
 		
-		JLabel lblUserscoreLabel = new JLabel("Score :");
+		JLabel lblUserscoreLabel = new JLabel("Skor :");
 		lblUserscoreLabel.setBounds(180, 35, 49, 15);
 		panel.add(lblUserscoreLabel);
 		
@@ -209,7 +210,7 @@ public class GameForm {
 		btnNewButton.setBounds(449, 30, 117, 25);
 		panel.add(btnNewButton);
 		
-		JLabel lblComputerScoreLabel = new JLabel("Score :");
+		JLabel lblComputerScoreLabel = new JLabel("Skor :");
 		lblComputerScoreLabel.setBounds(748, 35, 49, 15);
 		panel.add(lblComputerScoreLabel);
 		
@@ -270,12 +271,12 @@ public class GameForm {
 		lblCurrentGameCount.setBounds(0, 35, 70, 15);
 		panel.add(lblCurrentGameCount);
 		
-		JLabel lblUser = new JLabel("User");
-		lblUser.setBounds(269, 21, 70, 15);
-		frame.getContentPane().add(lblUser);
+		JLabel lblUser = new JLabel("KULLANICI");
+		lblUser.setBounds(269, 21, 97, 15);
+		frmTaKatMakas.getContentPane().add(lblUser);
 		
-		JLabel lblComputer = new JLabel("Computer");
-		lblComputer.setBounds(779, 21, 70, 15);
+		JLabel lblComputer = new JLabel("BİLGİSAYAR");
+		lblComputer.setBounds(779, 21, 105, 15);
 		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -405,8 +406,8 @@ public class GameForm {
 		});
 		
 		
-		frame.getContentPane().add(lblComputer);
-		frame.setVisible(true);
+		frmTaKatMakas.getContentPane().add(lblComputer);
+		frmTaKatMakas.setVisible(true);
 	}
 
 	public void showImage(Mat img) {

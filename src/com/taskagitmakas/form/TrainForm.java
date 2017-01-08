@@ -28,7 +28,7 @@ import javax.swing.JCheckBox;
 public class TrainForm {
  
 
-		public JFrame frame;
+		public JFrame frmEitim;
 		private static ImageIcon image;
 		private static JLabel imageLabel = new JLabel("image");
 		private Boolean SizeCustom;
@@ -78,8 +78,9 @@ public class TrainForm {
 		 * Initialize the contents of the frame.
 		 */
 		private void initialize() {
-			frame = new JFrame();
-			frame.addWindowListener(new WindowAdapter() {
+			frmEitim = new JFrame();
+			frmEitim.setTitle("EĞİTİM");
+			frmEitim.addWindowListener(new WindowAdapter() {
 				@Override
 				public void windowOpened(WindowEvent arg0) {
 				 
@@ -150,28 +151,28 @@ public class TrainForm {
 			});
 		 
 
-			frame.setBounds(100, 100, 900, 650);
-			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frame.getContentPane().setLayout(null);
+			frmEitim.setBounds(100, 100, 900, 650);
+			frmEitim.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			frmEitim.getContentPane().setLayout(null);
 
 			JPanel panel = new JPanel();
 			panel.setBounds(0, 0, 678, 591);
 			panel.setToolTipText("");
 			panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 			panel.setLayout(null);
-			frame.getContentPane().add(panel);
+			frmEitim.getContentPane().add(panel);
 
 			JPanel panel_1 = new JPanel();
 			panel_1.setBounds(690, 0, 196, 591);
 			panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-			frame.getContentPane().add(panel_1);
+			frmEitim.getContentPane().add(panel_1);
 			panel_1.setLayout(null);
 			
 			JRadioButton classTypeRadioTas = new JRadioButton("Taş");
 			classTypeRadioTas.setBounds(59, 23, 50, 23);
 			panel_1.add(classTypeRadioTas);
 			
-			JRadioButton classTypeRadioKagit = new JRadioButton("Kagit");
+			JRadioButton classTypeRadioKagit = new JRadioButton("Kağıt");
 			classTypeRadioKagit.setBounds(59, 51, 62, 23);
 			panel_1.add(classTypeRadioKagit);
 			
@@ -180,7 +181,7 @@ public class TrainForm {
 			panel_1.add(classTypeRadioMakas);
 
 			JMenuBar menuBar = new JMenuBar();
-			frame.setJMenuBar(menuBar);
+			frmEitim.setJMenuBar(menuBar);
 
 			image = new ImageIcon();
 			Height = panel.getHeight();
@@ -205,7 +206,7 @@ public class TrainForm {
 				}
 			});
 			
-			JButton saveButton = new JButton("Kayit Et");
+			JButton saveButton = new JButton("Kayıt Et");
 			saveButton.setBounds(12, 222, 172, 25);
 			saveButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -253,7 +254,7 @@ public class TrainForm {
 			});
 			panel_1.add(isTestData);
 			
-			JLabel lblDatabaseBilgisi = new JLabel("Database Bilgisi");
+			JLabel lblDatabaseBilgisi = new JLabel("Veritabanı Bilgisi");
 			lblDatabaseBilgisi.setBounds(12, 302, 172, 15);
 			panel_1.add(lblDatabaseBilgisi);
 			
@@ -265,7 +266,7 @@ public class TrainForm {
 			lblTascount.setBounds(71, 330, 70, 15);
 			panel_1.add(lblTascount);
 			
-			JLabel lblKagit = new JLabel("Kagit:");
+			JLabel lblKagit = new JLabel("Kağıt:");
 			lblKagit.setBounds(12, 357, 70, 15);
 			panel_1.add(lblKagit);
 			
@@ -281,14 +282,14 @@ public class TrainForm {
 			lblMakascount.setBounds(71, 384, 71, 15);
 			panel_1.add(lblMakascount);
 			
-			chckbxisTest = new JCheckBox("Test olarak işaretle");
+			chckbxisTest = new JCheckBox("Test Olarak İşaretle");
 			chckbxisTest.setBounds(8, 117, 167, 23);
 			panel_1.add(chckbxisTest);
 			
 			
 			
 			startCalibrationButton.setVisible(false);
-			frame.setVisible(true);
+			frmEitim.setVisible(true);
 		}
 
 		public void showImage(Mat img) {

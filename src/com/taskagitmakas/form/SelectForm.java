@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 
 public class SelectForm {
 
-	private JFrame frame;
+	private JFrame frmAnaSayfa;
 	private JLabel lblUsername ;
 	public static TrainForm trainForm;
 	/**
@@ -30,8 +30,9 @@ public class SelectForm {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.addWindowListener(new WindowAdapter() {
+		frmAnaSayfa = new JFrame();
+		frmAnaSayfa.setTitle("ANA SAYFA");
+		frmAnaSayfa.addWindowListener(new WindowAdapter() {
 		 
 			@Override
 			public void windowActivated(WindowEvent e) {
@@ -42,18 +43,18 @@ public class SelectForm {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				
-				LoginForm.loginForm.frame.setVisible(true);
+				LoginForm.loginForm.frmKullancGirii.setVisible(true);
 			}
 		});
-		frame.setBounds(100, 100, 399, 245);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frmAnaSayfa.setBounds(100, 100, 399, 245);
+		frmAnaSayfa.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		JButton btnGame = new JButton("OYUN");
 		btnGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				new GameForm();
-				frame.setVisible(false);
+				frmAnaSayfa.setVisible(false);
 				
 				
 			}
@@ -64,14 +65,14 @@ public class SelectForm {
 			public void actionPerformed(ActionEvent ae) {
 				
 				trainForm=new TrainForm();
-				frame.setVisible(false);
+				frmAnaSayfa.setVisible(false);
 			}
 });
 		
-		JLabel lblHoGeldin = new JLabel("Hoş Geldin");
+		JLabel lblHoGeldin = new JLabel("Hoş Geldin:");
 		
 		 lblUsername = new JLabel("userNa");
-		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
+		GroupLayout groupLayout = new GroupLayout(frmAnaSayfa.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
@@ -98,16 +99,16 @@ public class SelectForm {
 						.addComponent(btnGame, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(95, Short.MAX_VALUE))
 		);
-		frame.getContentPane().setLayout(groupLayout);
+		frmAnaSayfa.getContentPane().setLayout(groupLayout);
 	}
 	
 	 
 
 	public JFrame getFrame() {
-		return frame;
+		return frmAnaSayfa;
 	}
 
 	public void setFrame(JFrame frame) {
-		this.frame = frame;
+		this.frmAnaSayfa = frame;
 	}
 }
