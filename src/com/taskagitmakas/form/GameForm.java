@@ -18,7 +18,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 
 import com.taskagitmakas.hog.CamRecorder;
 import com.taskagitmakas.hog.Hog;
@@ -27,7 +29,7 @@ public class GameForm {
 
 
 	public JFrame frame;
-	private  ImageIcon image,computerImage;
+	private  ImageIcon image,computerImage,userImage;
 	private  JLabel imageLabel = new JLabel("image");
 	private JLabel computerImageLabel = new JLabel("New label");
 	
@@ -180,6 +182,11 @@ public class GameForm {
 		Height = computerScreen.getHeight();
 		Width = computerScreen.getWidth();
 		
+		userImage = new ImageIcon();
+		Height = 100;
+		Width = 100;
+		
+		
 		imageLabel.setBounds(0, 0, 640, 480);
 		imageLabel.setText("");
 		userScreen.add(imageLabel);
@@ -197,7 +204,7 @@ public class GameForm {
 		lblUserscore.setBounds(264, 35, 8, 15);
 		panel.add(lblUserscore);
 		
-		JButton btnNewButton = new JButton("Test");
+		JButton btnNewButton = new JButton("Oyna");
 		
 		btnNewButton.setBounds(449, 30, 117, 25);
 		panel.add(btnNewButton);
@@ -247,8 +254,8 @@ public class GameForm {
 		btnYeniOyun.setBounds(155, 119, 117, 25);
 		panel.add(btnYeniOyun);
 		
-		JLabel lblUserClass = new JLabel("New label");
-		lblUserClass.setBounds(25, 87, 70, 15);
+		JLabel lblUserClass = new JLabel(".");
+		lblUserClass.setBounds(22, 76, 100, 100);
 		panel.add(lblUserClass);
 		
 		JLabel lblUserGameStatus = new JLabel("..");
@@ -322,23 +329,42 @@ public class GameForm {
 							lblComputerGameStatus.setText("Kazandı...");
 							lblUserGameStatus.setText("Kaybetti...");
 		
-							computerScore++;
+							computerScore++; 
 							
 						}
 					 
 						lblUserscore.setText(Integer.toString(userScore));
 						lblComputerscore.setText(Integer.toString(computerScore));
+						
+						Mat userShape=new Mat();
+					
 						if(userClass==1){
 							
-							lblUserClass.setText("Taş");
+							userShape=Highgui.imread("assets/1.png");
+							Imgproc.resize(userShape, userShape, new Size(100, 100));
+
+							BufferedImage imageFromUser=toBufferedImage(userShape);
+							userImage.setImage(imageFromUser);
+							lblUserClass.setIcon(userImage);
+							lblUserClass.updateUI();
+						 
 							
 						}else if(userClass==2){
 							
-							lblUserClass.setText("Kagit");
-		
+							userShape=Highgui.imread("assets/2.png");	
+							Imgproc.resize(userShape, userShape, new Size(100, 100));
+							BufferedImage imageFromUser=toBufferedImage(userShape);
+							userImage.setImage(imageFromUser);
+							lblUserClass.setIcon(userImage);
+							lblUserClass.updateUI();		
 						}else {
 							
-							lblUserClass.setText("Makas");
+							userShape=Highgui.imread("assets/3.png");	
+							Imgproc.resize(userShape, userShape, new Size(100, 100));
+							BufferedImage imageFromUser=toBufferedImage(userShape);
+							userImage.setImage(imageFromUser);
+							lblUserClass.setIcon(userImage);
+							lblUserClass.updateUI();
 		
 						}
 		

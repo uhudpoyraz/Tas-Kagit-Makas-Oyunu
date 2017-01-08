@@ -34,7 +34,7 @@ public class CamRecorder {
 	private Point[] samplePoints = null;
 	private Mat background, Image;
 
-	private int squareLen = 50;
+	private int squareLen = 40;
 
 	private ColorBlobDetector mDetector;
 	private Mat mSpectrum;

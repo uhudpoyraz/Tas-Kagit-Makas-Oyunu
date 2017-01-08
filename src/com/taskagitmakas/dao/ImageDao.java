@@ -11,6 +11,8 @@ public interface ImageDao {
 	public Image get(int id);
 	public List<Image> all();
 	public List<Image> all(boolean isTest);
+	public List<Image> all(int userId);
+
 	public List<Image> getSampleByCount(int classType);
 	public Long getCountByClassType(int imageClass);
 	public List<Image> getAllByUser(int id);
