@@ -151,6 +151,7 @@ public class CamRecorder {
 
 		List<MatOfPoint> contours = mDetector.getContours();
 		mDetector.process(c);
+		if(contours.size()>0){
 		RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contours.get(0).toArray()));
 		double boundWidth = rect.size.width;
 		double boundHeight = rect.size.height;
@@ -202,6 +203,7 @@ public class CamRecorder {
 		int defectsTotal = (int) convexDefect.total();
 
 			// mDetector.mGray.copyTo(grayImage);
+		}
 return m;
 
 	}
